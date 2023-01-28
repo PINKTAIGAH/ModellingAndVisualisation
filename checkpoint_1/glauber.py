@@ -1,5 +1,4 @@
 import sys
-import matplotlib.animation as animation
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -91,6 +90,21 @@ def draw_image(im, sweep):
         sweep=0
         return im, sweep
 
+def run_simulation(switch,sweep,time_i):
+    #=======================================================
+    # Run simulation when called
+    generate_lattice()
+    fig, im= initialise_plot()
+    while True:
+        switch, sweep= glauber_dynamics_step(switch, sweep)
+        
+        if sweep%10==0 and sweep!=0:
+            im, sweep= draw_image(im, sweep)
+            time_f= time.time()
+            print(time_f-time_i)
+            time_i= time_f
+    
+
 def main():
     
     if(len(sys.argv) != 3):
@@ -104,19 +118,10 @@ def main():
     kT=float(sys.argv[2]) 
     switch=1
     sweep=0
-    #time_i= time.time()
+    time_i= time.time()
     #========================================================
 
-    generate_lattice()
-    fig, im= initialise_plot()
-    while True:
-        switch, sweep, i= glauber_dynamics_step(switch, sweep, i)
-        
-        if sweep%10==0 and sweep!=0:
-            im, sweep= draw_image(im, sweep)
-            #time_f= time.time()
-            #print(time_f-time_i)
-            #time_i= time_f
+    run_simulation(switch, sweep, time_i)
 
     
 
