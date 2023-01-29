@@ -137,8 +137,8 @@ def run_simulation_visualisation(switch,sweep,time_i):
 def run_simulation_calculation(switch, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    if os.path.isfile(f'glauber_data({kT}).txt')== True:
-        os.remove(f'glauber_data({kT}).txt')
+    if os.path.isfile(f'data/glauber_data({kT}).txt')== True:
+        os.remove(f'data/glauber_data({kT}).txt')
     
     collected_dp= 0
     total_dp= 10000
@@ -152,7 +152,7 @@ def run_simulation_calculation(switch, sweep):
             state_magnetisation= find_total_magnetisation()
             dp= np.array([state_energy, state_magnetisation])
             
-            with open(f'glauber_data({kT}).txt','a') as f:   
+            with open(f'data/glauber_data({kT}).txt','a') as f:   
                 np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
         if collected_dp > total_dp:
             sys.exit()
