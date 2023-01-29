@@ -144,8 +144,8 @@ def run_simulation_visualisation(swap, sweep, time_i= None):
 def run_simulation_calculation(swap, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    if os.path.isfile('kawazaki_data.txt')== True:
-        os.remove('kawazaki_data.txt')
+    if os.path.isfile(f'kawazaki_data({kT}).txt')== True:
+        os.remove(f'kawazaki_data({kT}).txt')
     
     collected_dp= 0
     total_dp= 10000
@@ -158,7 +158,7 @@ def run_simulation_calculation(swap, sweep):
             state_magnetisation= find_total_magnetisation()
             dp= np.array([state_magnetisation])
             
-            with open('kawazaki_data.txt','a') as f:   
+            with open(f'kawazaki_data({kT}).txt','a') as f:   
                 np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
         if collected_dp > total_dp:
             sys.exit()
