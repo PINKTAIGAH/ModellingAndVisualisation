@@ -73,6 +73,30 @@ def glauber_dynamics_step(switch, sweep):
         sweep+=1
     return switch, sweep
 
+def find_total_energy(J=1):
+    #=======================================================
+    # Find total energy of lattice    
+    total_energy=[]
+    for inx, val in np.ndenumerate(lattice):
+        iy,ix= inx
+
+        if ix+1 == N:
+            ix= -1
+    
+        if iy+1 == N:
+            iy= -1
+    
+        e_cell= -J*val*(lattice[iy +1][ix]+\
+                    lattice[iy -1][ix]+\
+                    lattice[iy][ix +1]+\
+                    lattice[iy][ix -1])
+        total_energy.append(e_cell)
+    return sum(total_energy)
+
+
+def find_total_magnetisation():
+    return lattice.sum()
+
 def initialise_plot():
     #=======================================================
     # Compute one step in glauber dynamics 
@@ -90,9 +114,9 @@ def draw_image(im, sweep):
         sweep=0
         return im, sweep
 
-def run_simulation(switch,sweep,time_i):
+def run_simulation_visualisation(switch,sweep,time_i):
     #=======================================================
-    # Run simulation when called
+    # Run simulation and visualise when called
     generate_lattice()
     fig, im= initialise_plot()
     while True:
@@ -104,6 +128,21 @@ def run_simulation(switch,sweep,time_i):
             print(time_f-time_i)
             time_i= time_f
     
+
+def run_simulation_calculation(switch, sweep):
+    #=======================================================
+    # Run simulation and calculation of energy and magnetisation when called
+    
+    generate_lattice()
+
+    while True:
+        switch, sweep= glauber_dynamics_step(switch, sweep)
+    
+        if sweep%10==0 and sweep!=0:
+            state_energy= find_total_energy()
+            state_magnetisation= find_total_magnetisation()
+            print(state_energy, state_magnetisation)
+
 
 def main():
     
@@ -124,7 +163,7 @@ def main():
     if flag == str('v'):
         run_simulation(switch, sweep, time_i)
     elif flag == str('c'):
-        print('CALCULATING')
+        run_simulation_calculation(switch, sweep)
     else:
         raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
 
