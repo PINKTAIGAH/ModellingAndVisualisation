@@ -121,7 +121,7 @@ def draw_image(im, sweep):
         sweep=0
         return im, sweep
 
-def run_simulation(swap, sweep, time_i):
+def run_simulation_vis(swap, sweep, time_i= None):
     #=======================================================
     # Run simulation when called   
     generate_lattice()
@@ -136,21 +136,27 @@ def run_simulation(swap, sweep, time_i):
             time_i= time_f
 
 def main():
-    #if(len(sys.argv) != 3):
-     #   print ("Usage python ising.animation.py {Lattice size} {Temperature}")
-      #  sys.exit()
+    if(len(sys.argv) != 4):
+        print ("Usage python ising.animation.py {Lattice size} {Temperature} {Flag}")
+        print('Simulation flags: v ==> visualise, c ==> calculate')
+        sys.exit()
     
     #=======================================================
     # Init parameters
     global N, kT
     N=int(sys.argv[1]) 
     kT=float(sys.argv[2]) 
+    flag= str(sys.argv[3])
     swap=1
     sweep=0
     time_i= time.time()
     #========================================================
-
-    run_simulation(swap, sweep, time_i)
+    if flag == str('v'):
+        run_simulation(swap, sweep, time_i)
+    elif flag == str('c'):
+        print('CALCULATING')
+    else:
+        raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
 
 if __name__ == '__main__':
     main()

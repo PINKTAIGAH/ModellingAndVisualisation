@@ -107,8 +107,8 @@ def run_simulation(switch,sweep,time_i):
 
 def main():
     
-    if(len(sys.argv) != 3):
-        print ("Usage python ising.animation.py {Lattice size} {Temperature}")
+    if(len(sys.argv) != 4):
+        print ("Usage python ising.animation.py {Lattice size} {Temperature} {Flag}")
         sys.exit()
     
     #=======================================================
@@ -116,12 +116,19 @@ def main():
     global N, kT
     N=int(sys.argv[1]) 
     kT=float(sys.argv[2]) 
+    flag= str(sys.argv[3])
     switch=1
     sweep=0
     time_i= time.time()
     #========================================================
+    if flag == str('v'):
+        run_simulation(switch, sweep, time_i)
+    elif flag == str('c'):
+        print('CALCULATING')
+    else:
+        raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
 
-    run_simulation(switch, sweep, time_i)
+
 
     
 
