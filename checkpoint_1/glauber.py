@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -95,6 +96,8 @@ def find_total_energy(J=1):
 
 
 def find_total_magnetisation():
+    #=======================================================
+    # Compute total magnetisation of lattice
     return lattice.sum()
 
 def initialise_plot():
@@ -117,31 +120,42 @@ def draw_image(im, sweep):
 def run_simulation_visualisation(switch,sweep,time_i):
     #=======================================================
     # Run simulation and visualise when called
+    i= 0
     generate_lattice()
     fig, im= initialise_plot()
     while True:
         switch, sweep= glauber_dynamics_step(switch, sweep)
         
         if sweep%10==0 and sweep!=0:
+            i+=1
             im, sweep= draw_image(im, sweep)
             time_f= time.time()
-            print(time_f-time_i)
+            print(i, time_f-time_i)
             time_i= time_f
     
 
 def run_simulation_calculation(switch, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
+    if os.path.isfile('glauber_data.txt')== True:
+        os.remove('glauber_data.txt')
     
+    collected_dp= 0
+    total_dp= 10000
     generate_lattice()
-
     while True:
         switch, sweep= glauber_dynamics_step(switch, sweep)
-    
         if sweep%10==0 and sweep!=0:
+            collected_dp += 1
+            print(f'{collected_dp-1}/10000 data points collected')
             state_energy= find_total_energy()
             state_magnetisation= find_total_magnetisation()
-            print(state_energy, state_magnetisation)
+            dp= np.array([state_energy, state_magnetisation])
+            
+            with open('glauber_data.txt','a') as f:   
+                np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
+        if collected_dp > total_dp:
+            sys.exit()
 
 
 def main():
@@ -161,7 +175,7 @@ def main():
     time_i= time.time()
     #========================================================
     if flag == str('v'):
-        run_simulation(switch, sweep, time_i)
+        run_simulation_visualisation(switch, sweep, time_i)
     elif flag == str('c'):
         run_simulation_calculation(switch, sweep)
     else:

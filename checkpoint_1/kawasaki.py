@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -86,6 +87,11 @@ def apply_kawazaki_change(delta_e, coords_1, coords_2, s_center_1, s_center_2):
         else:
             return
 
+def find_total_magnetisation():
+    #=======================================================
+    # Compute total magnetisation of lattice
+    return lattice.sum()
+
 def kawazaki_dynamic_step(swap, sweep):
     #=======================================================
     # Compute step for kawazaki dynamics
@@ -121,7 +127,7 @@ def draw_image(im, sweep):
         sweep=0
         return im, sweep
 
-def run_simulation_vis(swap, sweep, time_i= None):
+def run_simulation_visualisation(swap, sweep, time_i= None):
     #=======================================================
     # Run simulation when called   
     generate_lattice()
@@ -134,6 +140,28 @@ def run_simulation_vis(swap, sweep, time_i= None):
             time_f= time.time()
             print(time_f-time_i)
             time_i= time_f
+
+def run_simulation_calculation(swap, sweep):
+    #=======================================================
+    # Run simulation and calculation of energy and magnetisation when called
+    if os.path.isfile('kawazaki_data.txt')== True:
+        os.remove('kawazaki_data.txt')
+    
+    collected_dp= 0
+    total_dp= 10000
+    generate_lattice()
+    while True:
+        swap, sweep= kawazaki_dynamic_step(swap, sweep)
+        if sweep%10==0 and sweep!=0:
+            collected_dp += 1
+            print(f'{collected_dp-1}/10000 data points collected')
+            state_magnetisation= find_total_magnetisation()
+            dp= np.array([state_magnetisation])
+            
+            with open('kawazaki_data.txt','a') as f:   
+                np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
+        if collected_dp > total_dp:
+            sys.exit()
 
 def main():
     if(len(sys.argv) != 4):
@@ -152,9 +180,9 @@ def main():
     time_i= time.time()
     #========================================================
     if flag == str('v'):
-        run_simulation(swap, sweep, time_i)
+        run_simulation_visualisation(swap, sweep, time_i)
     elif flag == str('c'):
-        print('CALCULATING')
+        run_simulation_calculation(swap, sweep)
     else:
         raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
 
