@@ -137,26 +137,29 @@ def run_simulation_visualisation(switch,sweep,time_i):
 def run_simulation_calculation(switch, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    if os.path.isfile(f'data/glauber_data({kT}).txt')== True:
-        os.remove(f'data/glauber_data({kT}).txt')
-    
-    collected_dp= 0
-    total_dp= 10000
-    generate_lattice()
-    while True:
-        switch, sweep= glauber_dynamics_step(switch, sweep)
-        if sweep%10==0 and sweep!=0:
-            collected_dp += 1
-            print(f'{collected_dp-1}/10000 data points collected')
-            state_energy= find_total_energy()
-            state_magnetisation= find_total_magnetisation()
-            dp= np.array([state_energy, state_magnetisation])
-            
-            with open(f'data/glauber_data({kT}).txt','a') as f:   
-                np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
-        if collected_dp > total_dp:
-            sys.exit()
-
+    temps=np.arange(0.2, 5.2, 0.2)
+    for temp in np.nditer(temps):   
+        kT= temp
+        if os.path.isfile(f'data/glauber_data({kT:.2}).txt')== True:
+            os.remove(f'data/glauber_data({kT:.2}).txt')
+        
+        collected_dp= 0
+        total_dp= 100000
+        generate_lattice()
+        while True:
+            switch, sweep= glauber_dynamics_step(switch, sweep)
+            if sweep%10==0 and sweep!=0:
+                collected_dp += 1
+                print(f'kT= {kT:.2} ### {collected_dp-1}/{total_dp} dp collected')
+                state_energy= find_total_energy()
+                state_magnetisation= find_total_magnetisation()
+                dp= np.array([state_energy, state_magnetisation])
+                
+                with open(f'data/glauber_data({kT:.2}).txt','a') as f:   
+                    np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
+            if collected_dp > total_dp:
+                break
+    sys.exit()
 
 def main():
     
