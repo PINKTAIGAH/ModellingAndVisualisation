@@ -11,8 +11,8 @@ energy= []
 magnetisation= []
 
 for i in range(len(data)):
-    energy.append(np.average(data[i][0][30000:]))
-    magnetisation.append(np.average(data[i][1][30000:]))
+    energy.append(np.average(data[i][0][:]))
+    magnetisation.append(np.average(np.absolute(data[i][1][:])))
 
 
 fig, (ax1, ax2)= plt.subplots(2, 1, sharex= True)

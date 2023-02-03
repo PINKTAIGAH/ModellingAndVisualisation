@@ -22,7 +22,8 @@ def generate_rand_coord():
 def ising_energy(coordX_1, coordY_1, coordX_2, coordY_2, s_center_1, s_center_2, J=1):
     #=======================================================
     # Find the energy of the two swapped states 
-    
+    state_ajacent= (False, ())
+
     if coordX_1 +1 == N:
         coordX_1= -1
     if coordY_1 +1 == N:
@@ -31,29 +32,32 @@ def ising_energy(coordX_1, coordY_1, coordX_2, coordY_2, s_center_1, s_center_2,
         coordX_2= -1
     if coordY_2 +1 == N:
         coordY_2= -1
-   
-    #elif abs(coordX_1-coordX_2)== 1 or abs(coordY_1-coordY_2)== 1:
     
     e_init= (-J*s_center_1*\
-            lattice[coordY_1 +1][coordX_1]+\
+            (lattice[coordY_1 +1][coordX_1]+\
             lattice[coordY_1 -1][coordX_1]+\
             lattice[coordY_1][coordX_1 +1]+\
-            lattice[coordY_1][coordX_1 -1])\
+            lattice[coordY_1][coordX_1 -1]))\
             +(-J*s_center_2*\
-            lattice[coordY_2 +1][coordX_2]+\
+            (lattice[coordY_2 +1][coordX_2]+\
             lattice[coordY_2 -1][coordX_2]+\
             lattice[coordY_2][coordX_2 +1]+\
-            lattice[coordY_2][coordX_2 -1])
+            lattice[coordY_2][coordX_2 -1]))
     e_final= (-J*s_center_2*\
-            lattice[coordY_1 +1][coordX_1]+\
+            (lattice[coordY_1 +1][coordX_1]+\
             lattice[coordY_1 -1][coordX_1]+\
             lattice[coordY_1][coordX_1 +1]+\
-            lattice[coordY_1][coordX_1 -1])\
+            lattice[coordY_1][coordX_1 -1]))\
             +(-J*s_center_1*\
-            lattice[coordY_2 +1][coordX_2]+\
+            (lattice[coordY_2 +1][coordX_2]+\
             lattice[coordY_2 -1][coordX_2]+\
             lattice[coordY_2][coordX_2 +1]+\
-            lattice[coordY_2][coordX_2 -1])
+            lattice[coordY_2][coordX_2 -1]))
+    
+    if abs(coordX_1-coordX_2)== 1 or abs(coordY_1-coordY_2)== 1:
+        e_final+=2
+        e_init+=2
+
     return e_init, e_final
 
 
@@ -64,11 +68,8 @@ def find_kawazaki_delta_e(coords_1, coords_2):
     s_center_1= lattice[coordY_1][coordX_1]
     s_center_2= lattice[coordY_2][coordX_2]
 
-    if s_center_1 == s_center_2:
-        return
-    else:
-        e_init, e_final= ising_energy(coordX_1, coordY_1, coordX_2, coordY_2,\
-                            s_center_1, s_center_2)
+    e_init, e_final= ising_energy(coordX_1, coordY_1, coordX_2, coordY_2,\
+                        s_center_1, s_center_2)
     return e_final-e_init
 
 def apply_kawazaki_change(delta_e, coords_1, coords_2, s_center_1, s_center_2):
@@ -141,27 +142,59 @@ def run_simulation_visualisation(swap, sweep, time_i= None):
             print(time_f-time_i)
             time_i= time_f
 
+def find_total_energy(J=1):
+    #=======================================================
+    # Find total energy of lattice    
+    total_energy=[]
+    for inx, val in np.ndenumerate(lattice):
+        iy,ix= inx
+
+        if ix+1 == N:
+            ix= -1
+    
+        if iy+1 == N:
+            iy= -1
+    
+        e_cell= -J*val*(lattice[iy +1][ix]+\
+                    lattice[iy -1][ix]+\
+                    lattice[iy][ix +1]+\
+                    lattice[iy][ix -1])
+        total_energy.append(e_cell)
+    return sum(total_energy)/2
+
+
+def find_total_magnetisation():
+    #=======================================================
+    # Compute total magnetisation of lattice
+    return lattice.sum()
+
 def run_simulation_calculation(swap, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    if os.path.isfile(f'data/kawazaki_data({kT}).txt')== True:
-        os.remove(f'data/kawazaki_data({kT}).txt')
-    
-    collected_dp= 0
-    total_dp= 10000
-    generate_lattice()
-    while True:
-        swap, sweep= kawazaki_dynamic_step(swap, sweep)
-        if sweep%10==0 and sweep!=0:
-            collected_dp += 1
-            print(f'{collected_dp-1}/10000 data points collected')
-            state_magnetisation= find_total_magnetisation()
-            dp= np.array([state_magnetisation])
-            
-            with open(f'data/kawazaki_data({kT}).txt','a') as f:   
-                np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
-        if collected_dp > total_dp:
-            sys.exit()
+    temps=np.arange(1, 3.2, 0.1)
+    for temp in np.nditer(temps):   
+        kT= temp
+        if os.path.isfile(f'data/kawasaki_data({kT:.2}).txt')== True:
+            os.remove(f'data/kawasaki_data({kT:.2}).txt')
+        
+        collected_dp= 0
+        total_dp= 1000
+        generate_lattice()
+        while True:
+            swap, sweep= kawazaki_dynamic_step(swap, sweep)
+            if sweep%10==0 and sweep!=0:
+                collected_dp += 1
+                print(f'kT= {kT:.2} ### {collected_dp-1}/{total_dp} dp collected')
+                state_energy= find_total_energy()
+                state_magnetisation= find_total_magnetisation()
+                dp= np.array([state_energy, state_magnetisation])
+                
+                with open(f'data/glauber_data({kT:.2}).txt','a') as f:   
+                    np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
+                sweep= 1 
+            if collected_dp > total_dp:
+                break
+    sys.exit()
 
 def main():
     if(len(sys.argv) != 4):
