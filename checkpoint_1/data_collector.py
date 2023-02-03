@@ -1,0 +1,21 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+data= []
+for i in os.listdir('data'):
+    data.append(np.loadtxt(str('data/'+i), delimiter= ',').T)
+
+temperature= np.arange(0.2, 5.2, 0.2)
+energy= []
+magnetisation= []
+
+for i in range(len(data)):
+    energy.append(np.average(data[i][0][30000:]))
+    magnetisation.append(np.average(data[i][1][30000:]))
+
+
+fig, (ax1, ax2)= plt.subplots(2, 1, sharex= True)
+ax1.plot(temperature, np.array(energy))
+ax2.plot(temperature, np.array(magnetisation))
+plt.show()
