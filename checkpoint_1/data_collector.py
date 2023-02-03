@@ -6,7 +6,7 @@ data= []
 for i in os.listdir('data'):
     data.append(np.loadtxt(str('data/'+i), delimiter= ',').T)
 
-temperature= np.arange(0.2, 5.2, 0.2)
+temperature= np.arange(1, 3.2, 0.1)
 energy= []
 magnetisation= []
 
