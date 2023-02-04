@@ -126,7 +126,6 @@ def run_simulation_visualisation(switch,sweep,time_i):
     #=======================================================
     # Run simulation and visualise when called
     i= 0
-    generate_lattice_vis()
     fig, im= initialise_plot()
     while True:
         switch, sweep= glauber_dynamics_step(switch, sweep)
@@ -142,15 +141,14 @@ def run_simulation_visualisation(switch,sweep,time_i):
 def run_simulation_calculation(switch, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    temps=np.arange(1, 3.2, 0.1)
+    temps=np.arange(1, 3.1, 0.1)
     for temp in np.nditer(temps):   
         kT= temp
         if os.path.isfile(f'glauber_data/glauber_data({kT:.2}).txt')== True:
             os.remove(f'glauber_data/glauber_data({kT:.2}).txt')
         
         collected_dp= 0
-        total_dp= 1000
-        generate_lattice_calc()
+        total_dp= 10
         while True:
             switch, sweep= glauber_dynamics_step(switch, sweep)
             if sweep%10==0 and sweep!=0:
@@ -184,8 +182,10 @@ def main():
     time_i= time.time()
     #========================================================
     if flag == str('v'):
+        generate_lattice_vis()
         run_simulation_visualisation(switch, sweep, time_i)
     elif flag == str('c'):
+        generate_lattice_calc()
         run_simulation_calculation(switch, sweep)
     else:
         raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
