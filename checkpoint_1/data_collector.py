@@ -1,10 +1,19 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
+if str(sys.argv[1])== str('g'):
+    flag= str('glauber')
+elif str(sys.argv[1])== str('k'):
+    flag= str('kawasaki')
+else:
+    print('Add correct flag to arguments')
+
 
 data= []
-for i in os.listdir('data'):
-    data.append(np.loadtxt(str('data/'+i), delimiter= ',').T)
+for i in os.listdir(f'{flag}_data'):
+    data.append(np.loadtxt(str(f'{flag}_data/'+i), delimiter= ',').T)
 
 temperature= np.arange(1, 3.2, 0.1)
 energy= []

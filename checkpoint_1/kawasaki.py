@@ -189,7 +189,7 @@ def run_simulation_calculation(swap, sweep):
                 state_magnetisation= find_total_magnetisation()
                 dp= np.array([state_energy, state_magnetisation])
                 
-                with open(f'data/glauber_data({kT:.2}).txt','a') as f:   
+                with open(f'data/kawasaki_data({kT:.2}).txt','a') as f:   
                     np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
                 sweep= 1 
             if collected_dp > total_dp:
