@@ -6,11 +6,17 @@ import matplotlib.animation as animation
 import time
 
 
-def generate_lattice():
+def generate_lattice_vis():
     #=======================================================
     # Function to return random latice of -1 and 1
     global lattice
     lattice= np.random.choice(np.array([1,-1]), size=(N, N))
+
+def generate_lattice_calc():
+    #=======================================================
+    # Function to return a lattice with all cells in an identical state.
+    global lattice
+    lattice= np.ones((N,N))
 
 def generate_rand_coord():
     #=======================================================
@@ -131,7 +137,7 @@ def draw_image(im, sweep):
 def run_simulation_visualisation(swap, sweep, time_i= None):
     #=======================================================
     # Run simulation when called   
-    generate_lattice()
+    generate_lattice_vis()
     fig, im= initialise_plot()
     while True:
         swap, sweep= kawazaki_dynamic_step(swap, sweep)
@@ -179,7 +185,7 @@ def run_simulation_calculation(swap, sweep):
         
         collected_dp= 0
         total_dp= 1000
-        generate_lattice()
+        generate_lattice_calc()
         while True:
             swap, sweep= kawazaki_dynamic_step(swap, sweep)
             if sweep%10==0 and sweep!=0:

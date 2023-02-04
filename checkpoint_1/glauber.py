@@ -5,12 +5,17 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 
-def generate_lattice():
+def generate_lattice_vis():
     #=======================================================
     # Function to return random latice of -1 and 1
     global lattice
     lattice= np.random.choice(np.array([1,-1]), size=(N, N))
-  
+
+def generate_lattice_calc():
+    #=======================================================
+    # Function to return a lattice with all cells in an identical state.
+    global lattice
+    lattice= np.ones((N,N))
 
 def generate_rand_coord():
     #=======================================================
@@ -121,7 +126,7 @@ def run_simulation_visualisation(switch,sweep,time_i):
     #=======================================================
     # Run simulation and visualise when called
     i= 0
-    generate_lattice()
+    generate_lattice_vis()
     fig, im= initialise_plot()
     while True:
         switch, sweep= glauber_dynamics_step(switch, sweep)
@@ -145,7 +150,7 @@ def run_simulation_calculation(switch, sweep):
         
         collected_dp= 0
         total_dp= 1000
-        generate_lattice()
+        generate_lattice_calc()
         while True:
             switch, sweep= glauber_dynamics_step(switch, sweep)
             if sweep%10==0 and sweep!=0:
