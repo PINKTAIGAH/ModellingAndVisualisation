@@ -145,8 +145,8 @@ def run_simulation_calculation(switch, sweep):
     temps=np.arange(1, 3.2, 0.1)
     for temp in np.nditer(temps):   
         kT= temp
-        if os.path.isfile(f'data/glauber_data({kT:.2}).txt')== True:
-            os.remove(f'data/glauber_data({kT:.2}).txt')
+        if os.path.isfile(f'glauber_data/glauber_data({kT:.2}).txt')== True:
+            os.remove(f'glauber_data/glauber_data({kT:.2}).txt')
         
         collected_dp= 0
         total_dp= 1000
@@ -160,7 +160,7 @@ def run_simulation_calculation(switch, sweep):
                 state_magnetisation= find_total_magnetisation()
                 dp= np.array([state_energy, state_magnetisation])
 
-                with open(f'data/glauber_data({kT:.2}).txt','a') as f:   
+                with open(f'glauber_data/glauber_data({kT:.2}).txt','a') as f:   
                     np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
                 sweep= 1
             if collected_dp > total_dp:
