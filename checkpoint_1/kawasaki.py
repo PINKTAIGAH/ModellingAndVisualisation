@@ -14,9 +14,9 @@ def generate_lattice_vis():
 
 def generate_lattice_calc():
     #=======================================================
-    # Function to return a lattice with all cells in an identical state.
+    # Function to return a lattice with all cells in near ground state
     global lattice
-    lattice= np.ones((N,N))
+    lattice= np.random.choice(np.array([1,-1]), size=(N, N), p=[0.9, 0.1])
 
 def generate_rand_coord():
     #=======================================================
@@ -107,7 +107,7 @@ def kawazaki_dynamic_step(swap, sweep):
     s_center_2= lattice[coords_2[1]][coords_2[0]]
     
     if s_center_1 == s_center_2:
-        pass
+        return swap, sweep
     else:
         delta_e= find_kawazaki_delta_e(coords_1, coords_2)
         apply_kawazaki_change(delta_e, coords_1, coords_2, s_center_1, s_center_2)
@@ -137,7 +137,6 @@ def draw_image(im, sweep):
 def run_simulation_visualisation(swap, sweep, time_i= None):
     #=======================================================
     # Run simulation when called   
-    generate_lattice_vis()
     fig, im= initialise_plot()
     while True:
         swap, sweep= kawazaki_dynamic_step(swap, sweep)
@@ -185,7 +184,6 @@ def run_simulation_calculation(swap, sweep):
         
         collected_dp= 0
         total_dp= 1000
-        generate_lattice_calc()
         while True:
             swap, sweep= kawazaki_dynamic_step(swap, sweep)
             if sweep%10==0 and sweep!=0:
@@ -219,8 +217,10 @@ def main():
     time_i= time.time()
     #========================================================
     if flag == str('v'):
+        generate_lattice_vis()
         run_simulation_visualisation(swap, sweep, time_i)
     elif flag == str('c'):
+        generate_lattice_calc()
         run_simulation_calculation(swap, sweep)
     else:
         raise Exception('Input valid flag\nSimulation flags: v ==> visualise, c ==> calculate')
