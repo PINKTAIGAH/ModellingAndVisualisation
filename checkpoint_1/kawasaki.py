@@ -107,7 +107,7 @@ def kawazaki_dynamic_step(swap, sweep):
     s_center_2= lattice[coords_2[1]][coords_2[0]]
     
     if s_center_1 == s_center_2:
-        return swap, sweep
+        pass
     else:
         delta_e= find_kawazaki_delta_e(coords_1, coords_2)
         apply_kawazaki_change(delta_e, coords_1, coords_2, s_center_1, s_center_2)
