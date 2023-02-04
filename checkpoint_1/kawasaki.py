@@ -183,7 +183,7 @@ def run_simulation_calculation(swap, sweep):
             os.remove(f'kawasaki_data/kawasaki_data({kT:.2}).txt')
         
         collected_dp= 0
-        total_dp= 10
+        total_dp= 1000
         while True:
             swap, sweep= kawazaki_dynamic_step(swap, sweep)
             if sweep%10==0 and sweep!=0:
