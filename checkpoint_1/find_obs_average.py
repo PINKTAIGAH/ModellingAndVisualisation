@@ -11,11 +11,11 @@ else:
     print('Add correct flag to arguments')
 
 data= []
-for i in os.listdir(f'raw_{flag}_data'):
+for i in sorted(os.listdir(f'raw_{flag}_data')):
     data.append(np.loadtxt(str(f'raw_{flag}_data/'+i), delimiter= ',').T)
+print(sorted(os.listdir(f'raw_{flag}_data')))
 
-
-temperature= np.arange(1, 3.2, 0.1)
+temperature= np.arange(1, 3.1, 0.1)
 
 
 energy= []
@@ -29,7 +29,7 @@ for i in range(len(data)):
 fig, (ax1, ax2)= plt.subplots(2, 1, sharex= True)
 ax1.scatter(temperature, energy)
 ax2.scatter(temperature, magnetisation)
-plt.show
+plt.show()
 
 
 

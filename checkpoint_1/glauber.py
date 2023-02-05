@@ -150,7 +150,7 @@ def run_simulation_calculation(switch, sweep):
             os.remove(f'raw_glauber_data/glauber_data({kT:.2}).txt')
         
         collected_dp= 0
-        total_dp= 20
+        total_dp= 1000
         while True:
             switch, sweep= glauber_dynamics_step(switch, sweep)
             if sweep%10==0 and sweep!=0:
