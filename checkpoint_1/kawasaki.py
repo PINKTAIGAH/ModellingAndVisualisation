@@ -179,6 +179,7 @@ def run_simulation_calculation(swap, sweep):
     fig, im= initialise_plot()
     temps=np.arange(1, 3.1, 0.1)
     for temp in np.nditer(temps):   
+        global kT
         kT= temp
         if os.path.isfile(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')== True:
             os.remove(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')

@@ -144,12 +144,13 @@ def run_simulation_calculation(switch, sweep):
     fig, im= initialise_plot()
     temps=np.arange(1, 3.1, 0.1)
     for temp in np.nditer(temps):   
+        global kT
         kT= temp
         if os.path.isfile(f'raw_glauber_data/glauber_data({kT:.2}).txt')== True:
             os.remove(f'raw_glauber_data/glauber_data({kT:.2}).txt')
         
         collected_dp= 0
-        total_dp= 1000
+        total_dp= 20
         while True:
             switch, sweep= glauber_dynamics_step(switch, sweep)
             if sweep%10==0 and sweep!=0:
