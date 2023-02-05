@@ -16,7 +16,7 @@ def generate_lattice_calc():
     #=======================================================
     # Function to return a lattice with all cells in near ground state
     global lattice
-    lattice= np.random.choice(np.array([1,-1]), size=(N, N), p=[0.9, 0.1])
+    lattice= np.random.choice(np.array([1,-1]), size=(N, N), p=[0.95, 0.05])
 
 def generate_rand_coord():
     #=======================================================
