@@ -15,7 +15,7 @@ for i in os.listdir(f'raw_{flag}_data'):
     data.append(np.loadtxt(str(f'raw_{flag}_data/'+i), delimiter= ',').T)
 
 
-temperature= np.arange(1, 3.2, 0.1)
+temperature= np.arange(1, 3.1, 0.1)
 
 
 energy= []
