@@ -176,24 +176,26 @@ def find_total_magnetisation():
 def run_simulation_calculation(swap, sweep):
     #=======================================================
     # Run simulation and calculation of energy and magnetisation when called
-    temps=np.arange(1, 3.2, 0.1)
+    fig, im= initialise_plot()
+    temps=np.arange(1, 3.1, 0.1)
     for temp in np.nditer(temps):   
         kT= temp
-        if os.path.isfile(f'kawasaki_data/kawasaki_data({kT:.2}).txt')== True:
-            os.remove(f'kawasaki_data/kawasaki_data({kT:.2}).txt')
-        
+        if os.path.isfile(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')== True:
+            os.remove(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')
+
         collected_dp= 0
         total_dp= 1000
         while True:
             swap, sweep= kawazaki_dynamic_step(swap, sweep)
             if sweep%10==0 and sweep!=0:
+                im, sweep= draw_image(im, sweep)
                 collected_dp += 1
                 print(f'kT= {kT:.2} ### {collected_dp-1}/{total_dp} dp collected')
                 state_energy= find_total_energy()
                 state_magnetisation= find_total_magnetisation()
                 dp= np.array([state_energy, state_magnetisation])
                 
-                with open(f'kawasaki_data/kawasaki_data({kT:.2}).txt','a') as f:   
+                with open(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt','a') as f:   
                     np.savetxt(f, dp.reshape(1,-1), delimiter=",", fmt= '%s')
                 sweep= 1 
             if collected_dp > total_dp:
