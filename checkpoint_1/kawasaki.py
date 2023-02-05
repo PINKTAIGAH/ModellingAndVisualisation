@@ -16,7 +16,8 @@ def generate_lattice_calc():
     #=======================================================
     # Function to return a lattice with all cells in near ground state
     global lattice
-    lattice= np.random.choice(np.array([1,-1]), size=(N, N), p=[0.95, 0.05])
+    lattice= np.ones((N,N))
+    lattice[int(N/4):int(3*N/4), int(N/4):int(3*N/4)]= -1
 
 def generate_rand_coord():
     #=======================================================
@@ -107,7 +108,7 @@ def kawazaki_dynamic_step(swap, sweep):
     s_center_2= lattice[coords_2[1]][coords_2[0]]
     
     if s_center_1 == s_center_2:
-        return swap, sweep
+        pass
     else:
         delta_e= find_kawazaki_delta_e(coords_1, coords_2)
         apply_kawazaki_change(delta_e, coords_1, coords_2, s_center_1, s_center_2)
