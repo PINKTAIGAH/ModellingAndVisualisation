@@ -29,13 +29,8 @@ for i in range(len(data)):
     succeptibility.append((np.average(np.absolute(data[i][1][:])**2) - np.average(np.absolute(data[i][1][:]))**2)/(2500*temperature[i]))
     heat_capacity.append((np.average(np.absolute(data[i][0][:])**2) - np.average(np.absolute(data[i][0][:]))**2)/(2500*temperature[i]))
 
-
-fig, (ax1, ax2, ax3, ax4)= plt.subplots(4, 1)
-ax1.scatter(temperature, energy)
-ax2.scatter(temperature, magnetisation)
-ax3.plot(temperature, succeptibility)
-ax4.plot(temperature, heat_capacity)
-plt.show()
-
+header= str('temperature, avr_energy, avr_magnetisation, heat_capacity, succeptibility')
+output= np.array([temperature, energy, magnetisation, heat_capacity, succeptibility]).T
+np.savetxt(f'{flag}_obvs_data.txt', output, delimiter= ',', header= header)
 
 
