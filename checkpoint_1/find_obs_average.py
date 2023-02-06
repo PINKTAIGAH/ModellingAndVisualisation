@@ -27,7 +27,7 @@ for i in range(len(data)):
     energy.append(np.average(data[i][0][:]))
     magnetisation.append(np.average(np.absolute(data[i][1][:])))
     succeptibility.append((np.average(np.absolute(data[i][1][:])**2) - np.average(np.absolute(data[i][1][:]))**2)/(2500*temperature[i]))
-    heat_capacity.append((np.average(np.absolute(data[i][0][:])**2) - np.average(np.absolute(data[i][0][:]))**2)/(2500*temperature[i]))
+    heat_capacity.append((np.average(np.absolute(data[i][0][:])**2) - np.average(np.absolute(data[i][0][:]))**2)/(2500*temperature[i]**2))
 
 header= str('temperature, avr_energy, avr_magnetisation, heat_capacity, succeptibility')
 output= np.array([temperature, energy, magnetisation, heat_capacity, succeptibility]).T
