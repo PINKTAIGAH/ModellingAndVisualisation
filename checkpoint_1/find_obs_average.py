@@ -35,9 +35,9 @@ def calculate_obs(data):
     for i in range(len(data)):
         energy.append(np.average(data[i][0][:]))
         magnetisation.append(np.average(np.absolute(data[i][1][:])))
-        succeptibility.append((np.average(np.absolute(data[i][1][:])**2)\
+        succeptibility.append((np.average(np.absolute(data[i][1][:]**2))\
             - np.average(np.absolute(data[i][1][:]))**2)/(2500*temperature[i]))
-        heat_capacity.append((np.average(np.absolute(data[i][0][:])**2)\
+        heat_capacity.append((np.average(np.absolute(data[i][0][:]**2))\
             - np.average(np.absolute(data[i][0][:]))**2)/(2500*temperature[i]**2))
     return temperature, energy, magnetisation, succeptibility, heat_capacity
 
@@ -54,28 +54,6 @@ def energy_resample(data):
         total_energy_resampled_data.append(temp_resampled_data)
     return np.array(total_energy_resampled_data)
 
-def find_energy_errors(resampled_energy, temperature):
-    #===================================================
-    # Find errors for heat capacity and energy errors
-    energy_averages= []
-    heat_capacity_averages= []
-    print(resampled_energy.shape)
-    for i in range(resampled_energy.shape[0]):
-        energy_temp_averages= []
-        for j in range(resampled_energy.shape[1]):
-            energy_temp_averages.append(np.average(resampled_energy[i][j]))
-        energy_averages.append(energy_temp_averages)  
-    print(np.array(energy_averages))
-    
-    '''
-    for i in range(resampled_energy.shape[0]):
-
-        resampled_heat_capacity[i]= np.std(resampled_heat_capacity[i])
-        resampled_energy[i]= np.std(resampled_energy[i])
-    '''
-
-
-
 def magnetisation_resample(data):
     #===================================================
     # Generate 1000 resampled magnetisation data sets @ each temp
@@ -87,23 +65,75 @@ def magnetisation_resample(data):
             bootstrap_resample= np.random.choice(data[i][0][:], size= n)
             temp_resampled_data.append(bootstrap_resample)
         total_magnetisation_resampled_data.append(temp_resampled_data)
-    return np.array(total_magnetisation_resampled_data).shape
+    return np.array(total_magnetisation_resampled_data)
 
-def write_obs_data(flag, temperature, energy, magnetisation, succeptibility, heat_capacity):
+
+def find_energy_errors(data, raw_resampled_energy, temperature):
+    #===================================================
+    # Find errors for heat capacity and energy errors
+    heat_capacity_resampled= np.empty(raw_resampled_energy.shape[:2])
+    heat_capacity_error= []
+    energy_error=[]
+
+    for i in range(raw_resampled_energy.shape[0]):
+        for j in range(raw_resampled_energy.shape[1]):
+            
+            heat_capacity_resampled[i][j]= (np.average(np.absolute(raw_resampled_energy[i][j][:]**2))\
+            - np.average(np.absolute(raw_resampled_energy[i][j][:]))**2)/(2500*temperature[i]**2)
+    
+    for i in range(raw_resampled_energy.shape[0]):
+        c_averages= []
+        for j in range(raw_resampled_energy.shape[1]):
+            c_averages.append(np.average(heat_capacity_resampled[i][j]))
+        c_averages= np.array(c_averages)
+        heat_capacity_error.append(np.std(c_averages))  
+        energy_error.append(np.std(data[i][0])/np.sqrt(data[i].shape[1]))
+    
+    return np.array(energy_error), np.array(heat_capacity_error)
+
+def find_magnetisation_errors(data, raw_resampled_mag, temperature):
+    #===================================================
+    # Find errors for succeptibility and magnetisation errors
+    succeptibility_resampled= np.empty(raw_resampled_mag.shape[:2])
+    succeptibility_error= []
+    magnetisation_error=[]
+
+    for i in range(raw_resampled_mag.shape[0]):
+        for j in range(raw_resampled_mag.shape[1]):
+            
+            succeptibility_resampled[i][j]= (np.average(np.absolute(raw_resampled_mag[i][j][:]**2))\
+            - np.average(np.absolute(raw_resampled_mag[i][j][:]))**2)/(2500*temperature[i])
+    
+    for i in range(raw_resampled_mag.shape[0]):
+        chi_averages= []
+        for j in range(raw_resampled_mag.shape[1]):
+            chi_averages.append(np.average(succeptibility_resampled[i][j]))
+        chi_averages= np.array(chi_averages)
+        succeptibility_error.append(np.std(chi_averages))  
+        magnetisation_error.append(np.std(data[i][1])/np.sqrt(data[i].shape[1]))
+    
+    return np.array(magnetisation_error), np.array(succeptibility_error)
+
+
+def write_obs_data(flag, temperature, energy, magnetisation, succeptibility, heat_capacity,\
+                    e_energy, e_cv, e_mag, e_succ):
     #===================================================
     # Write calculated obs data to txt
-    header= str('temperature, avr_energy, avr_magnetisation, heat_capacity, succeptibility')
-    output= np.array([temperature, energy, magnetisation, heat_capacity, succeptibility]).T
+    header= str('temperature, avr_energy, avr_magnetisation, heat_capacity, succeptibility, E_energy, E_heat capacity, E_magnetisation, E_succeptibility')
+    output= np.array([temperature, energy, magnetisation, heat_capacity, succeptibility,\
+                        e_energy, e_cv, e_mag, e_succ]).T
     np.savetxt(f'{flag}_obvs_data.txt', output, delimiter= ',', header= header)
 
 def main():
     global k,n
     n,k= 1000, 1000
     data, flag= read_raw_data()
-    temp, energy, mag, chi, c_v= calculate_obs(data)
+    temp, energy, mag, chi, cv= calculate_obs(data)
     energy_resampled_data= energy_resample(data)
-    find_energy_errors(energy_resampled_data, temp)
-    write_obs_data(flag, temp, energy, mag, chi, c_v) 
+    magnetisation_resampled_data= magnetisation_resample(data)
+    e_energy, e_cv= find_energy_errors(data, energy_resampled_data, temp)
+    e_mag, e_succ= find_magnetisation_errors(data, magnetisation_resampled_data, temp)
+    write_obs_data(flag, temp, energy, mag, chi, cv, e_energy, e_cv, e_mag, e_succ ) 
 
 if __name__== '__main__':
     main()

@@ -12,7 +12,7 @@ else:
 
 data= np.loadtxt(str(f'{flag}_obvs_data.txt'), delimiter= ',').T
 
-plt.scatter(data[0], data[1], marker= 'x')
+plt.errorbar(data[0], data[1], yerr= data[5], marker= 'x', ecolor= 'k')
 plt.xlabel('Temperature, T (a.u.)')
 plt.ylabel('Average energy, $\overline{E}$ (a.u.)')
 plt.title(f'Average energy vs temperature for {flag} dynamics')
@@ -22,7 +22,7 @@ plt.show()
 
 plt.clf()
 
-plt.scatter(data[0], data[2], marker= 'x')
+plt.errorbar(data[0], data[2], yerr= data[7], marker= 'x', ecolor= 'k')
 plt.xlabel('Temperature, T (a.u.)')
 plt.ylabel('Average magnetisation, $\overline{M}$ (a.u.)')
 plt.title(f'Average magnetisation vs temperature for {flag} dynamics')
@@ -32,7 +32,7 @@ plt.show()
 
 plt.clf()
 
-plt.scatter(data[0], data[3], marker= 'x')
+plt.errorbar(data[0], data[3], yerr= data[6], marker= 'x', ecolor= 'k')
 plt.xlabel('Temperature, T (a.u.)')
 plt.ylabel('Specific heat capacity $C_v$ (a.u.)')
 plt.title(f'Specific heat capacity vs temperature for {flag} dynamics')
@@ -42,7 +42,7 @@ plt.show()
 
 plt.clf()
 
-plt.scatter(data[0], data[4], marker= 'x')
+plt.errorbar(data[0], data[4], yerr= data[8], marker= 'x', ecolor= 'k')
 plt.xlabel('Temperature, T (a.u.)')
 plt.ylabel('Succeptibility $\chi$ (a.u.)')
 plt.title(f'Succeptibility vs temperature for {flag} dynamics')
