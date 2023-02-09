@@ -37,8 +37,8 @@ def calculate_obs(data):
         magnetisation.append(np.average(np.absolute(data[i][1][:])))
         succeptibility.append((np.average(np.absolute(data[i][1][:]**2))\
             - np.average(np.absolute(data[i][1][:]))**2)/(2500*temperature[i]))
-        heat_capacity.append((np.average(np.absolute(data[i][0][:]**2))\
-            - np.average(np.absolute(data[i][0][:]))**2)/(2500*temperature[i]**2))
+        heat_capacity.append((np.average(data[i][0][:]**2)\
+            - np.average(data[i][0][:])**2)/(2500*temperature[i]**2))
     return temperature, energy, magnetisation, succeptibility, heat_capacity
 
 def energy_resample(data):
@@ -62,7 +62,7 @@ def magnetisation_resample(data):
     for i in range(len(data)):
         temp_resampled_data= []
         for j in range(k):
-            bootstrap_resample= np.random.choice(data[i][0][:], size= n)
+            bootstrap_resample= np.random.choice(data[i][1][:], size= n)
             temp_resampled_data.append(bootstrap_resample)
         total_magnetisation_resampled_data.append(temp_resampled_data)
     return np.array(total_magnetisation_resampled_data)
