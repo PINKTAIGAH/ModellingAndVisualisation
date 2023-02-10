@@ -41,8 +41,8 @@ def calculate_obs(data):
     for i in range(len(data)):
         energy.append(np.average(data[i][0][:]))
         magnetisation.append(np.average(np.absolute(data[i][1][:])))
-        succeptibility.append((np.average(np.absolute(data[i][1][:]**2))\
-            - np.average(np.absolute(data[i][1][:]))**2)/(2500*temperature[i]))
+        succeptibility.append((np.average((data[i][1][:]**2))\
+            - np.average((data[i][1][:]))**2)/(2500*temperature[i]))
         heat_capacity.append((np.average(data[i][0][:]**2)\
             - np.average(data[i][0][:])**2)/(2500*temperature[i]**2))
     return temperature, energy, magnetisation, succeptibility, heat_capacity
@@ -108,8 +108,8 @@ def find_magnetisation_errors(data, raw_resampled_mag, temperature):
     for i in range(raw_resampled_mag.shape[0]):
         for j in range(raw_resampled_mag.shape[1]):
             
-            succeptibility_resampled[i][j]= (np.average(np.absolute(raw_resampled_mag[i][j][:]**2))\
-            - np.average(np.absolute(raw_resampled_mag[i][j][:]))**2)/(2500*temperature[i])
+            succeptibility_resampled[i][j]= (np.average((raw_resampled_mag[i][j][:]**2))\
+            - np.average((raw_resampled_mag[i][j][:]))**2)/(2500*temperature[i])
     # Loop over all kT to calculate errors for magnetisation and succeptibility
     for i in range(raw_resampled_mag.shape[0]):
         chi_averages= []
