@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 
+"""
+Script that will simulate a two state system of the ising model according to 
+kawasaki dynamics. c flag will compute and print total energy and magnetisation for 
+temperature ranges between kT= 1 to 3. v flag will visualize the system at specified
+temperature
+"""
 
 def generate_lattice_vis():
     #=======================================================
@@ -141,7 +147,7 @@ def run_simulation_visualisation(swap, sweep, time_i= None):
     fig, im= initialise_plot()
     while True:
         swap, sweep= kawazaki_dynamic_step(swap, sweep)
-        
+        # Visualise current state
         if sweep%10==0 and sweep!=0:
             im, sweep= draw_image(im, sweep)
             time_f= time.time()
@@ -179,16 +185,18 @@ def run_simulation_calculation(swap, sweep):
     # Run simulation and calculation of energy and magnetisation when called
     fig, im= initialise_plot()
     temps=np.arange(1, 3.1, 0.1)
+    # Loop for desired temperature ranges    
     for temp in np.nditer(temps):   
         global kT
         kT= temp
+        # Check if raw data file exists and deleat if it does        
         if os.path.isfile(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')== True:
             os.remove(f'raw_kawasaki_data/kawasaki_data({kT:.2}).txt')
-
         collected_dp= 0
         total_dp= 1000
         while True:
             swap, sweep= kawazaki_dynamic_step(swap, sweep)
+            # Write out data of current state and visualise it            
             if sweep%10==0 and sweep!=0:
                 im, sweep= draw_image(im, sweep)
                 collected_dp += 1

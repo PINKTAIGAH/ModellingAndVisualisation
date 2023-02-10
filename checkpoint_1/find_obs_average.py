@@ -2,6 +2,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+"""
+Script that will process raw data generated for glauber.py or kawasaki.pi for temperature 
+ranges kT= 1 to 3
+"""
 
 def retrieve_flag():
     #===================================================
@@ -32,6 +36,7 @@ def calculate_obs(data):
     succeptibility= []
     heat_capacity= []
     temperature= np.arange(1, 3.1, 0.1)
+    # Loop over all kT data sets to calculate relevant values
     for i in range(len(data)):
         energy.append(np.average(data[i][0][:]))
         magnetisation.append(np.average(np.absolute(data[i][1][:])))
@@ -75,12 +80,13 @@ def find_energy_errors(data, raw_resampled_energy, temperature):
     heat_capacity_error= []
     energy_error=[]
 
+    # Loop over all kT to calculate resampled heat capacity
     for i in range(raw_resampled_energy.shape[0]):
         for j in range(raw_resampled_energy.shape[1]):
             
             heat_capacity_resampled[i][j]= (np.average(np.absolute(raw_resampled_energy[i][j][:]**2))\
             - np.average(np.absolute(raw_resampled_energy[i][j][:]))**2)/(2500*temperature[i]**2)
-    
+    # Loop over all kT to calculate errors for energy and heat capacity
     for i in range(raw_resampled_energy.shape[0]):
         c_averages= []
         for j in range(raw_resampled_energy.shape[1]):
@@ -97,13 +103,13 @@ def find_magnetisation_errors(data, raw_resampled_mag, temperature):
     succeptibility_resampled= np.empty(raw_resampled_mag.shape[:2])
     succeptibility_error= []
     magnetisation_error=[]
-
+    # Loop over all kT to calculate resampled succeptibility
     for i in range(raw_resampled_mag.shape[0]):
         for j in range(raw_resampled_mag.shape[1]):
             
             succeptibility_resampled[i][j]= (np.average(np.absolute(raw_resampled_mag[i][j][:]**2))\
             - np.average(np.absolute(raw_resampled_mag[i][j][:]))**2)/(2500*temperature[i])
-    
+    # Loop over all kT to calculate errors for magnetisation and succeptibility
     for i in range(raw_resampled_mag.shape[0]):
         chi_averages= []
         for j in range(raw_resampled_mag.shape[1]):

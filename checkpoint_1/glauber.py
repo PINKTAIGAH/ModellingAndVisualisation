@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 
+"""
+Script that will simulate a two state system of the ising model according to 
+glauber dynamics. c flag will compute and print total energy and magnetisation for 
+temperature ranges between kT= 1 to 3. v flag will visualize the system at specified
+temperature
+"""
+
 def generate_lattice_vis():
     #=======================================================
     # Function to return random latice of -1 and 1
@@ -129,7 +136,7 @@ def run_simulation_visualisation(switch,sweep,time_i):
     fig, im= initialise_plot()
     while True:
         switch, sweep= glauber_dynamics_step(switch, sweep)
-        
+        # Visualise current state
         if sweep%10==0 and sweep!=0:
             i+=1
             im, sweep= draw_image(im, sweep)
@@ -143,9 +150,11 @@ def run_simulation_calculation(switch, sweep):
     # Run simulation and calculation of energy and magnetisation when called
     fig, im= initialise_plot()
     temps=np.arange(1, 3.1, 0.1)
+    # Loop for desired temperature ranges
     for temp in np.nditer(temps):   
         global kT
         kT= temp
+        # Check if raw data file exists and deleat if it does 
         if os.path.isfile(f'raw_glauber_data/glauber_data({kT:.2}).txt')== True:
             os.remove(f'raw_glauber_data/glauber_data({kT:.2}).txt')
         
@@ -153,6 +162,7 @@ def run_simulation_calculation(switch, sweep):
         total_dp= 1000
         while True:
             switch, sweep= glauber_dynamics_step(switch, sweep)
+            # Write out data of current state and visualise it
             if sweep%10==0 and sweep!=0:
                 im, sweep= draw_image(im, sweep)
                 collected_dp += 1

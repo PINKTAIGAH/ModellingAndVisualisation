@@ -3,6 +3,10 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
+"""
+Plot and save data written out from find_obs_average.py file
+"""
+
 if str(sys.argv[1])== str('g'):
     flag= str('glauber')
 elif str(sys.argv[1])== str('k'):
