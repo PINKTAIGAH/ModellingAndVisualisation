@@ -10,6 +10,7 @@ Script that will simulate a two state system of the ising model according to
 kawasaki dynamics. c flag will compute and print total energy and magnetisation for 
 temperature ranges between kT= 1 to 3. v flag will visualize the system at specified
 temperature
+Input ==> python kawasaki.py [N] [kT] [flag]
 """
 
 def generate_lattice_vis():

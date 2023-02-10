@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 """
-Plot and save data written out from find_obs_average.py file
+Plot and save data written out from find_obs_average.py file. k flag will use kawasaki data.
+g flag will use glauber data.
+Input ==> python find_obs_averages.py [flag]
 """
 
 if str(sys.argv[1])== str('g'):

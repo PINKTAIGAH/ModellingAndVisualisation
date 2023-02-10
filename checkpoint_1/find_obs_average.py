@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import sys
 """
 Script that will process raw data generated for glauber.py or kawasaki.pi for temperature 
-ranges kT= 1 to 3
+ranges kT= 1 to 3. k flag will use kawasaki raw data. g flag will use glauber raw data.
+Input ==> python find_obs_averages.py [flag]
 """
 
 def retrieve_flag():
