@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def generate_lattice():
-    # Generate initial latttoce with random distribution of states
+    # Generate initial latttice with random distribution of states 
     global lattice
     lattice= np.random.choice([0,1], size= (N,N))
 	
