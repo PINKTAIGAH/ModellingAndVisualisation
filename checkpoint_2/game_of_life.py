@@ -33,17 +33,18 @@ def update_cell(neighbour_population, i_x, i_y, cell_val):
 
 def find_local_population(i_x, i_y, cell_val):
     # Compute the local population of a cell
-    i_u, i_d= (i_x, i_y+1), (i_x, i_y-1)
-    i_l, i_r= (i_x-1, i_y), (i_x+1, i_y)
-    i_ul, i_ur= (i_x-1, i_y+1), (i_x+1, i_y+1)
-    i_dl, i_dr= (i_x-1, i_y-1), (i_x+1, i_y-1)
-
+    i_u, i_d= [i_x, i_y+1], [i_x, i_y-1]
+    i_l, i_r= [i_x-1, i_y], [i_x+1, i_y]
+    i_ul, i_ur= [i_x-1, i_y+1], [i_x+1, i_y+1]
+    i_dl, i_dr= [i_x-1, i_y-1], [i_x+1, i_y-1]
+    [i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr]= periodic_boundaries([i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr])
+    
     neighbour_population= lattice_old[i_u[1]][i_u[0]] + lattice_old[i_d[1]][i_d[1]] +\
                 lattice_old[i_r[1]][i_r[0]] + lattice_old[i_l[1]][i_l[0]] +\
                 lattice_old[i_ur[1]][i_ur[0]] + lattice_old[i_ul[1]][i_ul[0]] +\
                 lattice_old[i_dl[1]][i_dl[0]] + lattice_old[i_dr[1]][i_dr[0]]
     
-    (i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr)= periodic_boundaries([i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr])
+    
     return neighbour_population
 
 def update_lattice():
@@ -64,6 +65,7 @@ def initialise_plot():
     im=plt.imshow(lattice, animated=True, vmax=1, vmin=0)
     return fig, im
 
+
 def draw_image(im):
     #=======================================================
     # Draw frame of the animation
@@ -80,8 +82,10 @@ def run_simulation():
     im= draw_image(im)
     # Compute and plot each uptade in state
     while True:
+        time.sleep(0.001)
         update_lattice()
         im= draw_image(im)
+        ply.clear
 
 
 def main():
