@@ -1,30 +1,27 @@
 import sys
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 
 def generate_lattice():
     # Generate initial latttice with random distribution of states 
     global lattice
-    lattice= np.random.choice(np.array([-1, 1]), size=(N,N))
+    lattice= np.random.choice(np.array([0, 1]), size=(N,N))
 
 def periodic_boundaries(neighbours):
     # Apply periodic boundaries to neighbour indices if necesary
-    print(neighbours)
     for i in range(len(neighbours)):
-        print(neighbours[i][0])
-        if (neighbours[i][0] +1) % N > 1:
-            neighbours[i][0]= -1
-        if (neighbours[i][0] -1) % N >1:
-            neighbours[i][0]= N-1
-        if (neighbours[i][1] +1) % N >1:
-            neighbours[i][1] = -1
-        if (neighbours[i][1] -1) % N >1:
-            neighbours[i][1]= N-1        
+        if (neighbours[i][0]) >= N:
+            neighbours[i][0]= 0
+        if (neighbours[i][1]) >= N:
+            neighbours[i][1]= 0    
     return tuple(neighbours) 
 
 def update_cell(neighbour_population, i_x, i_y, cell_val):
     # Modify state of cell according to rules
-    if cell_val == 1 and neighbour_population < 2 or neighbour_population > 3:
+    if cell_val == 1 and neighbour_population < 2:
+        lattice[i_y][i_x]=0
+    elif cell_val == 1 and neighbour_population > 3:
         lattice[i_y][i_x]=0
     elif cell_val == 1:
         pass
@@ -39,12 +36,10 @@ def find_local_population(i_x, i_y, cell_val):
     i_dl, i_dr= [i_x-1, i_y-1], [i_x+1, i_y-1]
     [i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr]= periodic_boundaries([i_u, i_d, i_l, i_r, i_ul, i_ur, i_dl, i_dr])
     
-    neighbour_population= lattice_old[i_u[1]][i_u[0]] + lattice_old[i_d[1]][i_d[1]] +\
+    neighbour_population= lattice_old[i_u[1]][i_u[0]] + lattice_old[i_d[1]][i_d[0]] +\
                 lattice_old[i_r[1]][i_r[0]] + lattice_old[i_l[1]][i_l[0]] +\
                 lattice_old[i_ur[1]][i_ur[0]] + lattice_old[i_ul[1]][i_ul[0]] +\
                 lattice_old[i_dl[1]][i_dl[0]] + lattice_old[i_dr[1]][i_dr[0]]
-    
-    
     return neighbour_population
 
 def update_lattice():
@@ -52,10 +47,11 @@ def update_lattice():
     global lattice_old
     lattice_old= np.copy(lattice)
     # Loop for each cell i a lattice to compute update
-    for index, val in np.ndenumerate(lattice):
+    for index, val in np.ndenumerate(lattice_old):
         i_y= index[1]
         i_x= index[0]
         neighbour_population= find_local_population(i_x, i_y, val)
+        print(index, val, neighbour_population)
         update_cell(neighbour_population, i_x, i_y, val)
 
 def initialise_plot():
@@ -85,15 +81,17 @@ def run_simulation():
         time.sleep(0.001)
         update_lattice()
         im= draw_image(im)
-        ply.clear
+        plt.cla()
 
 
 def main():
+    """
     if len(sys.argv) != 2:
         print('Run file in command line as ==>\npython3 game_of_life.py N')
-    
+    """
     global N
-    N= int(sys.argv[1])
+    N= 50
+    #N= int(sys.argv[1])
     run_simulation()    
     
 if __name__== '__main__':
