@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 def generate_lattice():
     # Generate initial latttice with random distribution of states 
     global lattice
-    lattice= np.random.choice(np.array([0, 1]), size=(N,N))
+    #lattice= np.random.choice(np.array([0, 1]), size=(N,N))
+    lattice= np.loadtxt('empty_glider_lattice.txt')
 
 def periodic_boundaries(neighbours):
     # Apply periodic boundaries to neighbour indices if necesary
