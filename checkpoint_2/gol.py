@@ -125,7 +125,7 @@ def run_simulation_steady_state():
     counter= 0
     sweep= 0
     collected_dp= 0
-    total_dp= 5
+    total_dp= 1000
     pop_list= [250]
     steady_state_time=[]
     generate_lattice()
@@ -146,8 +146,6 @@ def run_simulation_steady_state():
             print(f'Equilibration time= {sweep} ### {collected_dp}/{total_dp} dp collected')
             generate_lattice()
             sweep=0
-            #sys.exit()   
-            #np.savetxt('random_population_dataset', np.array([time_list, pop_list]).T, delimiter= ',')
         if total_dp == collected_dp:
             break
     np.savetxt('equilibration_time_dataset', np.array([steady_state_time]).T, delimiter= ',') 
