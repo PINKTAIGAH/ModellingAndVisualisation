@@ -122,6 +122,7 @@ def run_simulation_vis():
 
 def run_simulation_steady_state():
     # Initialise game of life simulaiton for steady state calculation 
+    print('Initialised steady state calculation')
     counter= 0
     sweep= 0
     collected_dp= 0
@@ -129,14 +130,11 @@ def run_simulation_steady_state():
     pop_list= [250]
     steady_state_time=[]
     generate_lattice()
-    fig, im= initialise_plot()
-    im= draw_image(im)
     # Compute and plot each update in state for steady state calculation
     while True:
         time.sleep(0.001)
         update_lattice()
         pop= find_tot_active_sites()
-        im= draw_image(im)
         sweep+=1
         counter= check_steady_state(pop, pop_list[-1], counter)
         pop_list.append(pop)
