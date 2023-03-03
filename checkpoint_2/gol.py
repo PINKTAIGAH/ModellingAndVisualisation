@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def generate_lattice():
+    #=======================================================
     # Generate initial latttice  
     global lattice
     if flag_init == str('r'):
@@ -19,11 +20,12 @@ def generate_lattice():
         raise Exception('Input valid flag\nInit latice type: r ==> random, gl ==> glider, bl ==> blinker')
 
 def find_tot_active_sites():
+    #=======================================================
     # Find the total active sites in a lattice
-    print(np.sum(lattice))
     return np.sum(lattice)
 
 def steady_state_test(tot_active_sites_list):
+    #=======================================================
     # Return bool representing if lattice is in steady state
     active_site_derrivative= tot_active_sites_list[-1] - tot_active_sites_list[-2]
     if active_site_derrivative == 0:
@@ -32,6 +34,7 @@ def steady_state_test(tot_active_sites_list):
         return False
     
 def periodic_boundaries(neighbours_list):
+    #=======================================================
     # Apply periodic boundaries to neighbour indices if necesary
     for i in range(len(neighbours_list)):
         if (neighbours_list[i][0]) >= N:
@@ -41,6 +44,7 @@ def periodic_boundaries(neighbours_list):
     return tuple(neighbours_list) 
 
 def find_local_population(i_x, i_y):
+    #=======================================================
     # Compute the local population of a cell
     i_u, i_d= [i_x, i_y+1], [i_x, i_y-1]
     i_l, i_r= [i_x-1, i_y], [i_x+1, i_y]
@@ -57,6 +61,7 @@ def find_local_population(i_x, i_y):
     return neighbour_population
 
 def update_cell(neighbour_population, i_x, i_y, cell_val):
+    #=======================================================
     # Modify state of cell according to rules
     if cell_val == 1 and neighbour_population < 2:
         lattice[i_y][i_x]=0
@@ -68,6 +73,7 @@ def update_cell(neighbour_population, i_x, i_y, cell_val):
         lattice[i_y][i_x] = 1
 
 def update_lattice():
+    #======================================================= 
     # Update each cell in the lattice
     global lattice_old
     lattice_old= np.copy(lattice)
@@ -93,12 +99,18 @@ def draw_image(im):
         plt.draw()
         plt.pause(0.0001)
         return im
-i
+
+def check_steady_state(pop, pop_old, counter):
+    #=======================================================
+    # Check if system is in steady state 
+    if pop_old == pop:
+            counter+=1
+    else:
+        counter= 0
+    return counter
+
 def run_simulation_vis():
-    # Initialise game of life simulaiton
-    sweep= 0
-    time_list= [0]
-    pop_list= []
+    # Initialise game of life simulaiton for visualisation
     generate_lattice()
     fig, im= initialise_plot()
     im= draw_image(im)
@@ -106,11 +118,40 @@ def run_simulation_vis():
     while True:
         time.sleep(0.001)
         update_lattice()
+        im= draw_image(im)
+
+def run_simulation_steady_state():
+    # Initialise game of life simulaiton for steady state calculation 
+    counter= 0
+    sweep= 0
+    collected_dp= 0
+    total_dp= 5
+    pop_list= [250]
+    steady_state_time=[]
+    generate_lattice()
+    fig, im= initialise_plot()
+    im= draw_image(im)
+    # Compute and plot each update in state for steady state calculation
+    while True:
+        time.sleep(0.001)
+        update_lattice()
         pop= find_tot_active_sites()
         im= draw_image(im)
         sweep+=1
-        time_list.append(sweep)
-
+        counter= check_steady_state(pop, pop_list[-1], counter)
+        pop_list.append(pop)
+        if counter == 10:
+            steady_state_time.append(sweep)
+            collected_dp+=1
+            print(f'Equilibration time= {sweep} ### {collected_dp}/{total_dp} dp collected')
+            generate_lattice()
+            sweep=0
+            #sys.exit()   
+            #np.savetxt('random_population_dataset', np.array([time_list, pop_list]).T, delimiter= ',')
+        if total_dp == collected_dp:
+            break
+    np.savetxt('equilibration_time_dataset', np.array([steady_state_time]).T, delimiter= ',') 
+    sys.exit()
 
 def main():
     if len(sys.argv) != 4:
