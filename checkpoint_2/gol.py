@@ -6,18 +6,31 @@ import matplotlib.pyplot as plt
 def generate_lattice():
     # Generate initial latttice  
     global lattice
-    if flag == str('r'):
+    if flag_init == str('r'):
         # Random lattice
         lattice= np.random.choice(np.array([0, 1]), size=(N,N))
-    elif flag == str('gl'):
+    elif flag_init == str('gl'):
         # Generic lattice with glider
         lattice= np.loadtxt('empty_glider_lattice.txt')
-    elif flag == str('bl'):
+    elif flag_init == str('bl'):
         # Generic lattice with blinker
         lattice= np.loadtxt('empty_blinker_lattice.txt')
     else:
         raise Exception('Input valid flag\nInit latice type: r ==> random, gl ==> glider, bl ==> blinker')
 
+def find_tot_active_sites():
+    # Find the total active sites in a lattice
+    print(np.sum(lattice))
+    return np.sum(lattice)
+
+def steady_state_test(tot_active_sites_list):
+    # Return bool representing if lattice is in steady state
+    active_site_derrivative= tot_active_sites_list[-1] - tot_active_sites_list[-2]
+    if active_site_derrivative == 0:
+        return True
+    else:
+        return False
+    
 def periodic_boundaries(neighbours_list):
     # Apply periodic boundaries to neighbour indices if necesary
     for i in range(len(neighbours_list)):
@@ -54,7 +67,6 @@ def update_cell(neighbour_population, i_x, i_y, cell_val):
     elif cell_val == 0 and neighbour_population == 3:
         lattice[i_y][i_x] = 1
 
-
 def update_lattice():
     # Update each cell in the lattice
     global lattice_old
@@ -65,17 +77,6 @@ def update_lattice():
         i_x= index[1]
         neighbour_population= find_local_population(i_x, i_y)
         update_cell(neighbour_population, i_x, i_y, val)
-
-def run_simulation():
-    # Initialise game of life simulaiton
-    generate_lattice()
-    fig, im= initialise_plot()
-    im= draw_image(im)
-    # Compute and plot each uptade in state
-    while True:
-        time.sleep(0.001)
-        update_lattice()
-        im= draw_image(im)
 
 def initialise_plot():
     #=======================================================
@@ -92,14 +93,40 @@ def draw_image(im):
         plt.draw()
         plt.pause(0.0001)
         return im
+i
+def run_simulation_vis():
+    # Initialise game of life simulaiton
+    sweep= 0
+    time_list= [0]
+    pop_list= []
+    generate_lattice()
+    fig, im= initialise_plot()
+    im= draw_image(im)
+    # Compute and plot each uptade in state
+    while True:
+        time.sleep(0.001)
+        update_lattice()
+        pop= find_tot_active_sites()
+        im= draw_image(im)
+        sweep+=1
+        time_list.append(sweep)
+
 
 def main():
-    if len(sys.argv) != 3:
-        print('Run file in command line as ==>\npython3 game_of_life.py [Lattice size] [Init lattice type]')
-    global N, flag
+    if len(sys.argv) != 4:
+        print('Run file in command line as ==>\npython3 game_of_life.py [Lattice size] [Init lattice type] [Simulation type]')
+    global N, flag_init, flag_sim
     N= int(sys.argv[1])
-    flag= str(sys.argv[2])
-    run_simulation()   
+    flag_init= str(sys.argv[2])
+    flag_sim= str(sys.argv[3])
+    if flag_sim == str('vis'):
+        run_simulation_vis() 
+    elif flag_sim == str('ss'):
+        run_simulation_steady_state()
+    elif flag_sim == str('com'):
+        run_simulation_com()
+    else:
+        raise Exception('Input valid flag\nSimulation type: vis ==> visualisation, ss ==> Steady state, com ==> Center of mass')
 
 if __name__== '__main__':
     main()
