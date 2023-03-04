@@ -138,7 +138,7 @@ def run_simulation_steady_state():
         sweep+=1
         counter= check_steady_state(pop, pop_list[-1], counter)
         pop_list.append(pop)
-        if counter == 10:
+        if counter == 10 or sweep == 5000:
             steady_state_time.append(sweep)
             collected_dp+=1
             print(f'Equilibration time= {sweep} ### {collected_dp}/{total_dp} dp collected')
