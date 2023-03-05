@@ -24,6 +24,19 @@ def find_tot_active_sites():
     # Find the total active sites in a lattice
     return np.sum(lattice)
 
+def find_lattice_com():
+    #=======================================================
+    # Find the total active sites in a lattice
+    active_sites = 0
+    com_sum= np.zeros(2)
+    for index, val in np.ndenumerate(lattice):
+        if val == 1:
+            active_sites += 1
+            com_sum+= index          
+    
+    com_index= com_sum/active_sites
+    return np.sum(com_index)/com_index.size
+
 def steady_state_test(tot_active_sites_list):
     #=======================================================
     # Return bool representing if lattice is in steady state
@@ -110,6 +123,7 @@ def check_steady_state(pop, pop_old, counter):
     return counter
 
 def run_simulation_vis():
+    #=======================================================
     # Initialise game of life simulaiton for visualisation
     generate_lattice()
     fig, im= initialise_plot()
@@ -121,6 +135,7 @@ def run_simulation_vis():
         im= draw_image(im)
 
 def run_simulation_steady_state():
+    #=======================================================
     # Initialise game of life simulaiton for steady state calculation 
     print('Initialised steady state calculation')
     counter= 0
@@ -149,6 +164,31 @@ def run_simulation_steady_state():
     np.savetxt('equilibration_time_dataset', np.array([steady_state_time]).T, delimiter= ',') 
     sys.exit()
 
+def run_simulation_com():
+    #=======================================================
+    # Initialise game of life simulaiton for steady state calculation 
+    com_position_list= []
+    time_list= []
+    sweep= 0
+    generate_lattice()
+    # Compute and plot each uptade in state
+    while True:
+        time.sleep(0.001)
+        update_lattice()
+        com_position_list.append(find_lattice_com())
+        time_list.append(sweep)
+        sweep+= 1
+        print(sweep)
+        if sweep == 170:
+            break
+    com_position_list= np.array(com_position_list)
+    velocity_list= np.diff(np.array(com_position_list)) 
+    anomaly_index_1= np.array(np.asarray((velocity_list< 0)).nonzero())
+    anomaly_index_2= np.array(np.asarray((velocity_list>1)).nonzero())
+    total_anomalies_index= np.append(anomaly_index_1, anomaly_index_2)
+    com_position_list= np.delete(com_position_list, total_anomalies_index)
+    np.savetxt('com_dataset.txt', com_position_list.T)
+    
 def main():
     if len(sys.argv) != 4:
         print('Run file in command line as ==>\npython3 game_of_life.py [Lattice size] [Init lattice type] [Simulation type]')
