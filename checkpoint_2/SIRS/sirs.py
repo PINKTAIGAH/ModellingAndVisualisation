@@ -59,21 +59,39 @@ def find_neigbour_states(i_y, i_x):
     # Return list containing state of neighbour cells
     i_u, i_d, i_l, i_r= find_nearest_neigbours(i_y, i_x)
     neigbour_vals= [lattice[i[0]][i[1]] for i in [i_u, i_d, i_l, i_r]]
-    neighbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
-    return np.array(neighbour_states)
+    neigbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
+    return np.array(neigbour_states)
 
-def apply_sirs_rules(neigbour_states, i_y, i_x):
+def apply_sirs_rules_S(neigbour_state, i_y, i_x):
     #=======================================================
-    # Apply change to cell according to SIRS rules
-    random_flaot= np.random.random(1)[0]
-    if neigbour_states
+    # Apply change to succeptable cell according to SIRS rules
+    if str('I') in neigbour_state and np.random.rand() <= p1:
+        lattice[i_y][i_x] = 1
+
+def apply_sirs_rules_I(i_y, i_x):
+    #=======================================================
+    # Apply change to succeptable cell according to SIRS rules
+    if np.random.rand() <= p2:
+        lattice[i_y][i_x] = 2
+
+def apply_sirs_rules_R(i_y, i_x):
+    #=======================================================
+    # Apply change to succeptable cell according to SIRS rules
+    if np.random.rand() <= p3:
+        lattice[i_y][i_x] = 0
 
 def update_lattice():
     #=======================================================
     # Update the lattice per timestep
     i_y, i_x= generate_random_index()
-    neighbour_state= find_neigbour_states(i_y, i_x)
-    
+    neigbour_state= find_neigbour_states(i_y, i_x)
+    #print(neigbour_state)
+    if lattice[i_y][i_x] == 0:
+        apply_sirs_rules_S(neigbour_state, i_y, i_x)
+    if lattice[i_y][i_x] == 1:
+        apply_sirs_rules_I(i_y, i_x)
+    if lattice[i_y][i_x] == 2:
+        apply_sirs_rules_R(i_y, i_x)
 
 def run_simulation():
     #=======================================================
@@ -85,6 +103,7 @@ def run_simulation():
     im= draw_image(im)
     while True:
         update_lattice()
+        print(lattice.sum())
         time_steps+=1
         time.sleep(0.001)
         im= draw_image(im)
