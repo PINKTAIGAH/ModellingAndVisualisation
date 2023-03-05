@@ -10,14 +10,15 @@ def initialise_plot():
     #=======================================================
     # Compute one step in lattice update 
     fig= plt.figure()
-    im= plt.imshow(lattice, animated=True, vmax=2, vmin=0)
+    im= plt.imshow(lattice, animated=True, vmax=2, vmin=0, cmap='cool')
+    fig.colorbar(im)
     return fig, im
 
 def draw_image(im):
     #=======================================================
     # Draw frame of the animation
         plt.cla()
-        im= plt.imshow(lattice, animated= True, vmax=2, vmin=0)
+        im= plt.imshow(lattice, animated= True, vmax=2, vmin=0, cmap='cool')
         plt.draw()
         plt.pause(0.0001)
         return im
@@ -48,27 +49,31 @@ def periodic_boundaries(neighbours_list):
 def find_nearest_neigbours(i_y, i_x):
     #=======================================================
     # Return indices of nearest neighbours of a lattice points
-    i_u, i_d= [i_y+1, i_x], [i_y-1, i_x]
+    i_d, i_u= [i_y+1, i_x], [i_y-1, i_x]
     i_l, i_r= [i_y, i_x-1], [i_y, i_x+1]
-
     [i_u, i_d, i_l, i_r]= periodic_boundaries([i_u, i_d, i_l, i_r])
-
     return i_u, i_d, i_l, i_r
 
 def find_neigbour_states(i_y, i_x):
     #=======================================================
     # Return list containing state of neighbour cells
     i_u, i_d, i_l, i_r= find_nearest_neigbours(i_y, i_x)
-    print(i_y, i_x)
     neigbour_vals= [lattice[i[0]][i[1]] for i in [i_u, i_d, i_l, i_r]]
     neighbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
-    return neighbour_states
+    return np.array(neighbour_states)
+
+def apply_sirs_rules(neigbour_states, i_y, i_x):
+    #=======================================================
+    # Apply change to cell according to SIRS rules
+    random_flaot= np.random.random(1)[0]
+    if neigbour_states
 
 def update_lattice():
     #=======================================================
-    # Update the lattice according to thw SIRS rules
+    # Update the lattice per timestep
     i_y, i_x= generate_random_index()
-    print(find_neigbour_states(i_y, i_x))
+    neighbour_state= find_neigbour_states(i_y, i_x)
+    
 
 def run_simulation():
     #=======================================================
@@ -81,7 +86,8 @@ def run_simulation():
     while True:
         update_lattice()
         time_steps+=1
-        time.sleep(1)
+        time.sleep(0.001)
+        im= draw_image(im)
 
 
 def main():

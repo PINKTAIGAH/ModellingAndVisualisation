@@ -122,6 +122,17 @@ def check_steady_state(pop, pop_old, counter):
         counter= 0
     return counter
 
+def remove_boundery_effects(com_position_list):
+    #=======================================================
+    # Remove data points affected from glider crossing periodic boundary
+    com_position_list= np.array(com_position_list)
+    velocity_list= np.diff(np.array(com_position_list)) 
+    anomaly_index_1= np.array(np.asarray((velocity_list< 0)).nonzero())
+    anomaly_index_2= np.array(np.asarray((velocity_list>1)).nonzero())
+    total_anomalies_index= np.append(anomaly_index_1, anomaly_index_2)
+    com_position_list= np.delete(com_position_list, total_anomalies_index)
+    return com_position_list
+
 def run_simulation_vis():
     #=======================================================
     # Initialise game of life simulaiton for visualisation
@@ -181,12 +192,7 @@ def run_simulation_com():
         print(sweep)
         if sweep == 170:
             break
-    com_position_list= np.array(com_position_list)
-    velocity_list= np.diff(np.array(com_position_list)) 
-    anomaly_index_1= np.array(np.asarray((velocity_list< 0)).nonzero())
-    anomaly_index_2= np.array(np.asarray((velocity_list>1)).nonzero())
-    total_anomalies_index= np.append(anomaly_index_1, anomaly_index_2)
-    com_position_list= np.delete(com_position_list, total_anomalies_index)
+    com_position_list= remove_boundery_effects(com_position_list)
     np.savetxt('com_dataset.txt', com_position_list.T)
     
 def main():
