@@ -65,20 +65,23 @@ def find_neigbour_states(i_y, i_x):
 def apply_sirs_rules_S(neigbour_state, i_y, i_x):
     #=======================================================
     # Apply change to succeptable cell according to SIRS rules
+    # S ==> I
     if str('I') in neigbour_state and np.random.rand() <= p1:
-        lattice[i_y][i_x] = 1
+        lattice[i_y][i_x] = 2
 
 def apply_sirs_rules_I(i_y, i_x):
     #=======================================================
     # Apply change to succeptable cell according to SIRS rules
+    # I ==> R
     if np.random.rand() <= p2:
-        lattice[i_y][i_x] = 2
+        lattice[i_y][i_x] = 0
 
 def apply_sirs_rules_R(i_y, i_x):
     #=======================================================
     # Apply change to succeptable cell according to SIRS rules
+    # R ==> S
     if np.random.rand() <= p3:
-        lattice[i_y][i_x] = 0
+        lattice[i_y][i_x] = 1
 
 def update_lattice():
     #=======================================================
@@ -86,14 +89,14 @@ def update_lattice():
     i_y, i_x= generate_random_index()
     neigbour_state= find_neigbour_states(i_y, i_x)
     #print(neigbour_state)
-    if lattice[i_y][i_x] == 0:
+    if sir_key[lattice[i_y][i_x]] == str('S'):
         apply_sirs_rules_S(neigbour_state, i_y, i_x)
-    if lattice[i_y][i_x] == 1:
+    if sir_key[lattice[i_y][i_x]] == str('I'):
         apply_sirs_rules_I(i_y, i_x)
-    if lattice[i_y][i_x] == 2:
+    if sir_key[lattice[i_y][i_x]] == str('R'):
         apply_sirs_rules_R(i_y, i_x)
 
-def run_simulation():
+def run_simulation_vis():
     #=======================================================
     # Run SIRS simulation  
     time_steps=1
@@ -105,18 +108,19 @@ def run_simulation():
         update_lattice()
         time_steps+=1
         if time_steps% N**2 == 0:
-            im= draw_image(im)
             sweeps+= 1
+            time_steps=1
+            im= draw_image(im)
 
 def main():
     global N, p1, p2, p3
     N= int(sys.argv[1])
     p1, p2, p3= (float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]))
     global sir_key
-    sir_key= {  0:'S',
-            1:'I',
-            2:'R'}
-    run_simulation()
+    sir_key= {  1:'S',
+            2:'I',
+            0:'R'}
+    run_simulation_vis()
 
 
 if __name__== '__main__':
