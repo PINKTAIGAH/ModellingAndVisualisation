@@ -185,7 +185,6 @@ def run_simulation_wv():
     np.savetxt(f'Data/wave_contour_data.txt', np.array(data_total).T) 
     
 
-
 def main():
     global N, p1, p2, p3
     N= int(sys.argv[1])
@@ -202,6 +201,9 @@ def main():
     elif flag == str('ph'):
         # Compute the phase contour diagram of infection fraction for p_2 constant
         run_simulation_ph()
+    elif flag == str('wv'):
+        # Compute the wave location of infection fraction for p_2 constant
+        run_simulation_wv()
 
 if __name__== '__main__':
     main()
