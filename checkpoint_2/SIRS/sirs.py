@@ -121,8 +121,8 @@ def run_simulation_vis():
 def run_simulation_ph():
     #=======================================================
     # Run SIRS simulation in phase diagram mode
-    p1_vals= np.arange(0, 1.005, 0.005)
-    p3_vals= np.arange(0, 1.005, 0.005) 
+    p1_vals= np.arange(0, 1.05, 0.05)
+    p3_vals= np.arange(0, 1.05, 0.05) 
     time_steps=1
     sweeps= 0
     dp_total= 1100
@@ -143,12 +143,12 @@ def run_simulation_ph():
                     time_steps=1
                     infected_fraction= find_infected_fraction()
                     p1_p3_const_data.append(infected_fraction)
-                    print(f'p1={p1_vals[i]:.3} ## p3={p3_vals[j]:.3} ## Data points collected: {sweeps}/{dp_total}')
+                    print(f'p1={p1_vals[i]:.2} ## p3={p3_vals[j]:.2} ## Data points collected: {sweeps}/{dp_total}')
                 if sweeps == dp_total:
                     sweeps= 0
                     break
             p1_const_data.append(p1_p3_const_data)
-        np.savetxt(f'Data/{p1_vals[i]:.3}_contour_data.txt', np.array(p1_const_data).T) 
+        np.savetxt(f'Data/{p1_vals[i]:.2}_contour_data.txt', np.array(p1_const_data).T) 
 
 
 
