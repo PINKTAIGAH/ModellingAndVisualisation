@@ -62,6 +62,12 @@ def find_neigbour_states(i_y, i_x):
     neigbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
     return np.array(neigbour_states)
 
+def find_infected_fraction():
+    #=======================================================
+    # Compute the infected fraction of an array
+    n_infected= lattice[lattice == 2].sum()
+    return n_infected/lattice.size
+
 def apply_sirs_rules_S(neigbour_state, i_y, i_x):
     #=======================================================
     # Apply change to succeptable cell according to SIRS rules
@@ -98,7 +104,7 @@ def update_lattice():
 
 def run_simulation_vis():
     #=======================================================
-    # Run SIRS simulation  
+    # Run SIRS simulation in visualisation mode 
     time_steps=1
     sweeps= 0
     generate_lattice()
@@ -112,16 +118,57 @@ def run_simulation_vis():
             time_steps=1
             im= draw_image(im)
 
+def run_simulation_ph():
+    #=======================================================
+    # Run SIRS simulation in phase diagram mode
+    p1_vals= np.arange(0, 1.005, 0.005)
+    p3_vals= np.arange(0, 1.005, 0.005) 
+    time_steps=1
+    sweeps= 0
+    dp_total= 1100
+    for i in range(p1_vals.size):
+        global p1
+        pi= p1_vals[i]
+        p1_const_data= []
+        for j in range(p3_vals.size):
+            generate_lattice()
+            global p3
+            p3= p3_vals[j]
+            p1_p3_const_data= []
+            while True:
+                update_lattice()
+                time_steps+=1
+                if time_steps% N**2 == 0:
+                    sweeps+= 1
+                    time_steps=1
+                    infected_fraction= find_infected_fraction()
+                    p1_p3_const_data.append(infected_fraction)
+                    print(f'p1={p1_vals[i]:.3} ## p3={p3_vals[j]:.3} ## Data points collected: {sweeps}/{dp_total}')
+                if sweeps == dp_total:
+                    sweeps= 0
+                    break
+            p1_const_data.append(p1_p3_const_data)
+        np.savetxt(f'Data/{p1_vals[i]:.3}_contour_data.txt', np.array(p1_const_data).T) 
+
+
+
+
 def main():
     global N, p1, p2, p3
     N= int(sys.argv[1])
     p1, p2, p3= (float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]))
+    global flag
+    flag= str(sys.argv[5])
     global sir_key
     sir_key= {  1:'S',
             2:'I',
             0:'R'}
-    run_simulation_vis()
-
+    if flag == str('vis'):
+        # Run visualisation of SIRS model with given parameters
+        run_simulation_vis()
+    elif flag == str('ph'):
+        # Compute the phase contour diagram of infection fraction for p_2 constant
+        run_simulation_ph()
 
 if __name__== '__main__':
     main()
