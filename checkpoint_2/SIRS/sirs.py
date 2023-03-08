@@ -20,7 +20,7 @@ def draw_image(im):
         plt.cla()
         im= plt.imshow(lattice, animated= True, vmax=2, vmin=0, cmap='cool')
         plt.draw()
-        plt.pause(0.0001)
+        plt.pause(0.001)
         return im
 
 def generate_lattice():
@@ -103,11 +103,10 @@ def run_simulation():
     im= draw_image(im)
     while True:
         update_lattice()
-        print(lattice.sum())
         time_steps+=1
-        time.sleep(0.001)
-        im= draw_image(im)
-
+        if time_steps% N**2 == 0:
+            im= draw_image(im)
+            sweeps+= 1
 
 def main():
     global N, p1, p2, p3
