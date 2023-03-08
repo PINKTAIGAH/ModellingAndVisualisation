@@ -68,6 +68,12 @@ def find_infected_fraction():
     n_infected= lattice[lattice == 2].sum()
     return n_infected/lattice.size
 
+def find_infected_number():
+    #=======================================================
+    # Compute the infected number of an array
+    n_infected= lattice[lattice == 2].sum()
+    return n_infected
+
 def apply_sirs_rules_S(neigbour_state, i_y, i_x):
     #=======================================================
     # Apply change to succeptable cell according to SIRS rules
@@ -128,7 +134,7 @@ def run_simulation_ph():
     dp_total= 1100
     for i in range(p1_vals.size):
         global p1
-        pi= p1_vals[i]
+        p1= p1_vals[i]
         p1_const_data= []
         for j in range(p3_vals.size):
             generate_lattice()
@@ -150,7 +156,34 @@ def run_simulation_ph():
             p1_const_data.append(p1_p3_const_data)
         np.savetxt(f'Data/{p1_vals[i]:.2}_contour_data.txt', np.array(p1_const_data).T) 
 
-
+def run_simulation_wv():
+    #=======================================================
+    # Run SIRS simulation in phase diagram mode
+    p1_vals= np.arange(0.2, 0.5, 0.05)  
+    time_steps=1
+    sweeps= 0
+    dp_total= 10000
+    data_total= []
+    for i in range(p1_vals.size):
+        p1_const_data= []
+        global p1
+        p1= p1_vals[i]
+        generate_lattice()
+        while True:
+            update_lattice()
+            time_steps+=1
+            if time_steps% N**2 == 0:
+                sweeps+= 1
+                time_steps=1
+                infected_number= find_infected_number()
+                p1_const_data.append(infected_number)
+                print(f'p1={p1_vals[i]:.2} ## Data points collected: {sweeps}/{dp_total}')
+            if sweeps == dp_total:
+                sweeps= 0
+                break        
+        data_total.append(p1_const_data)
+    np.savetxt(f'Data/wave_contour_data.txt', np.array(data_total).T) 
+    
 
 
 def main():
