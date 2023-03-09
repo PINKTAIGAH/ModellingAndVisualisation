@@ -159,7 +159,7 @@ def run_simulation_ph():
 def run_simulation_wv():
     #=======================================================
     # Run SIRS simulation in phase diagram mode
-    p1_vals= np.arange(0.2, 0.5, 0.05)  
+    p1_vals= np.arange(0.2, 0.51, 0.01)  
     time_steps=1
     sweeps= 0
     dp_total= 10000
