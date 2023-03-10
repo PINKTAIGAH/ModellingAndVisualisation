@@ -12,6 +12,7 @@ for i in sorted(os.listdir(f'Data'))[:-1]:
     indv_data_averages= np.average(indv_data, axis=1)
     data.append(indv_data_averages)
 
-data= np.array(data)
-plt.imshow(data)
+print(data)
+data= np.flip(np.array(data), axis=0)
+plt.imshow(data, extent=[0,1,0,1])
 plt.show()

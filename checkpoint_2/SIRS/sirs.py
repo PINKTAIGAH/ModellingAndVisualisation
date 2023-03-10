@@ -62,16 +62,11 @@ def find_neigbour_states(i_y, i_x):
     neigbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
     return np.array(neigbour_states)
 
-def find_infected_fraction():
-    #=======================================================
-    # Compute the infected fraction of an array
-    n_infected= lattice[lattice == 2].sum()
-    return n_infected/lattice.size
 
 def find_infected_number():
     #=======================================================
     # Compute the infected number of an array
-    n_infected= lattice[lattice == 2].sum()
+    n_infected= lattice[lattice == 2].size
     return n_infected
 
 def apply_sirs_rules_S(neigbour_state, i_y, i_x):
@@ -100,7 +95,6 @@ def update_lattice():
     # Update the lattice per timestep
     i_y, i_x= generate_random_index()
     neigbour_state= find_neigbour_states(i_y, i_x)
-    #print(neigbour_state)
     if sir_key[lattice[i_y][i_x]] == str('S'):
         apply_sirs_rules_S(neigbour_state, i_y, i_x)
     if sir_key[lattice[i_y][i_x]] == str('I'):
@@ -118,6 +112,7 @@ def run_simulation_vis():
     im= draw_image(im)
     while True:
         update_lattice()
+        print(find_infected_number())
         time_steps+=1
         if time_steps% N**2 == 0:
             sweeps+= 1
@@ -147,9 +142,9 @@ def run_simulation_ph():
                 if time_steps% N**2 == 0:
                     sweeps+= 1
                     time_steps=1
-                    infected_fraction= find_infected_fraction()
-                    p1_p3_const_data.append(infected_fraction)
-                    print(f'p1={p1_vals[i]:.2} ## p3={p3_vals[j]:.2} ## Data points collected: {sweeps}/{dp_total}')
+                    infected_number= find_infected_number()
+                    p1_p3_const_data.append(infected_number)
+                    print(f'p1={p1:.2} ## p3={p3:.2} ## Data points collected: {sweeps}/{dp_total}')
                 if sweeps == dp_total:
                     sweeps= 0
                     break
