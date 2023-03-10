@@ -193,7 +193,7 @@ def run_simulation_im():
     f_im_vals= np.arange(0,1, 0.05)  
     time_steps=1
     sweeps= 0
-    dp_total= 10000
+    dp_total= 10
     data_total= []
     for i in range(f_im_vals.size):
         f_im_const_data= []
@@ -235,6 +235,9 @@ def main():
     elif flag == str('wv'):
         # Compute the wave location of infection fraction for p_2 constant
         run_simulation_wv()
+    elif flag == str('im'):
+        # Compute the immunity required for infection rate drop in lattice
+        run_simulation_im()
 
 if __name__== '__main__':
     main()
