@@ -6,19 +6,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def initialise_plot():
+def initialise_plot(val_max=2):
     #=======================================================
     # Compute one step in lattice update 
     fig= plt.figure()
-    im= plt.imshow(lattice, animated=True, vmax=2, vmin=0, cmap='cool')
+    im= plt.imshow(lattice, animated=True, vmax= val_max, vmin=0, cmap='cool')
     fig.colorbar(im)
     return fig, im
 
-def draw_image(im):
+def draw_image(im, val_max=2):
     #=======================================================
     # Draw frame of the animation
         plt.cla()
-        im= plt.imshow(lattice, animated= True, vmax=2, vmin=0, cmap='cool')
+        im= plt.imshow(lattice, animated= True, vmax=val_max, vmin=0, cmap='cool')
         plt.draw()
         plt.pause(0.001)
         return im
@@ -28,6 +28,13 @@ def generate_lattice():
     # Generate initial latttice  
     global lattice
     lattice= np.random.choice(np.array([0, 1, 2]), size=(N,N))
+
+def generate_lattice_immunity():
+    #=======================================================
+    # Generate initial latttice with immune cells
+    p_other= (1-f_im)/3
+    global lattice
+    lattice= np.random.choice(np.array([0,1,2,3]), size=(N,N), p= np.array([p_other, p_other, p_other, f_im])) 
 
 def generate_random_index():
     #=======================================================
@@ -61,7 +68,6 @@ def find_neigbour_states(i_y, i_x):
     neigbour_vals= [lattice[i[0]][i[1]] for i in [i_u, i_d, i_l, i_r]]
     neigbour_states= [sir_key[i] for i in tuple(neigbour_vals)]
     return np.array(neigbour_states)
-
 
 def find_infected_number():
     #=======================================================
@@ -97,14 +103,16 @@ def update_lattice():
     neigbour_state= find_neigbour_states(i_y, i_x)
     if sir_key[lattice[i_y][i_x]] == str('S'):
         apply_sirs_rules_S(neigbour_state, i_y, i_x)
-    if sir_key[lattice[i_y][i_x]] == str('I'):
+    elif sir_key[lattice[i_y][i_x]] == str('I'):
         apply_sirs_rules_I(i_y, i_x)
-    if sir_key[lattice[i_y][i_x]] == str('R'):
+    elif sir_key[lattice[i_y][i_x]] == str('R'):
         apply_sirs_rules_R(i_y, i_x)
 
 def run_simulation_vis():
     #=======================================================
     # Run SIRS simulation in visualisation mode 
+    global f_im
+    f_im= 0.5
     time_steps=1
     sweeps= 0
     generate_lattice()
@@ -112,12 +120,12 @@ def run_simulation_vis():
     im= draw_image(im)
     while True:
         update_lattice()
-        print(find_infected_number())
         time_steps+=1
         if time_steps% N**2 == 0:
             sweeps+= 1
             time_steps=1
             im= draw_image(im)
+            print(find_infected_number())
 
 def run_simulation_ph():
     #=======================================================
@@ -153,7 +161,7 @@ def run_simulation_ph():
 
 def run_simulation_wv():
     #=======================================================
-    # Run SIRS simulation in phase diagram mode
+    # Run SIRS simulation in wave plot mode
     p1_vals= np.arange(0.2, 0.51, 0.01)  
     time_steps=1
     sweeps= 0
@@ -179,6 +187,33 @@ def run_simulation_wv():
         data_total.append(p1_const_data)
     np.savetxt(f'Data/wave_contour_data.txt', np.array(data_total).T) 
     
+def run_simulation_im():
+    #=======================================================
+    # Run SIRS simulation in immunity mode
+    f_im_vals= np.arange(0,1, 0.05)  
+    time_steps=1
+    sweeps= 0
+    dp_total= 10000
+    data_total= []
+    for i in range(f_im_vals.size):
+        f_im_const_data= []
+        global f_im
+        f_im= f_im_vals[i]
+        generate_lattice_immunity()
+        while True:
+            update_lattice()
+            time_steps+=1
+            if time_steps% N**2 == 0:
+                sweeps+= 1
+                time_steps=1
+                infected_number= find_infected_number()
+                f_im_const_data.append(infected_number)
+                print(f'f_im={f_im:.2} ## Data points collected: {sweeps}/{dp_total}')
+            if sweeps == dp_total:
+                sweeps= 0
+                break        
+        data_total.append(f_im_const_data)
+    np.savetxt(f'Data/immunity_data.txt', np.array(data_total).T)
 
 def main():
     global N, p1, p2, p3
@@ -189,7 +224,8 @@ def main():
     global sir_key
     sir_key= {  1:'S',
             2:'I',
-            0:'R'}
+            0:'R',
+            3:'V'}
     if flag == str('vis'):
         # Run visualisation of SIRS model with given parameters
         run_simulation_vis()
