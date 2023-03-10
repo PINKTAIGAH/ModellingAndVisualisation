@@ -172,7 +172,7 @@ def run_simulation_wv():
                 time_steps=1
                 infected_number= find_infected_number()
                 p1_const_data.append(infected_number)
-                print(f'p1={p1_vals[i]:.2} ## Data points collected: {sweeps}/{dp_total}')
+                print(f'p1={p1:.2} ## Data points collected: {sweeps}/{dp_total}')
             if sweeps == dp_total:
                 sweeps= 0
                 break        
