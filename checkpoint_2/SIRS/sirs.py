@@ -193,7 +193,7 @@ def run_simulation_im():
     f_im_vals= np.arange(0,1, 0.05)  
     time_steps=1
     sweeps= 0
-    dp_total= 10
+    dp_total= 10000
     data_total= []
     for i in range(f_im_vals.size):
         f_im_const_data= []
