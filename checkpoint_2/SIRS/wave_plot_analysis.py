@@ -1,35 +1,30 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def one():
-    total_energy_resampled_data= []
-    for i in range(len(data)):
-        temp_resampled_data= []
-        for j in range(k):
-            bootstrap_resample= np.random.choice(data[i][0][:], size= n)
-            temp_resampled_data.append(bootstrap_resample)
-        total_energy_resampled_data.append(temp_resampled_data)
-    return np.array(total_energy_resampled_data)
+def generate_resampled_var(data, n=1000):
+    resampled_dataset= np.random.choice(data, size=n)
+    var= resampled_dataset.var()/2500
+    return var
+
+def find_indiv_error(data):
+    data= np.array(data)
+    return np.std(data)/np.sqrt(data.size)
 
 
-def find_resampled_variance(data, n=10000, k=10000):
-    total_resampled_data= []
+def find_resampled_variance(data, n=1000, k=1000):
+    variance_errors= []
     for i in range(data.shape[0]):
-        infected_resampled_data= []
+        bootstrapped_var= []
         for j in range(k):
-            bootstrap_resample= np.random.choice(data[i][:], size=n)
-            infected_resampled_data.append(bootstrap_resample)
-        total_resampled_data.append(infected_resampled_data)
-    return np.array(total_resampled_data)
-
-
-
-
+            bootstrapped_var.append(generate_resampled_var(data[i][:]))
+        variance_errors.append(find_indiv_error(bootstrapped_var))    
+    return variance_errors
 
 data= np.loadtxt('Data/wave_contour_data.txt').T
-resample_data= find_resampled_variance(data)
+errors= find_resampled_variance(data)
+print(errors)
 data_reduced= [data[i].var()/2500 for i in range(data.shape[0])] 
-plt.plot(np.arange(0.2,0.51,0.01), data_reduced)
+plt.errorbar(np.arange(0.2,0.51,0.01), data_reduced, yerr= errors)
 plt.title('Infection fraction varience vs Infection probability')
 plt.xlabel('Infection probabiolity, p$_1$')
 plt.ylabel('Variance of infection fraction')
