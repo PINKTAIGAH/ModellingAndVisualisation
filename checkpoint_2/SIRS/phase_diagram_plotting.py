@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 data= []
-for i in sorted(os.listdir(f'Data'))[:-1]:
+for i in sorted(os.listdir(f'Data'))[:-2]:
     file_name= f'Data/{i}'
     indv_data= np.loadtxt(file_name).T
     indv_data_averages= np.average(indv_data, axis=1)/2500

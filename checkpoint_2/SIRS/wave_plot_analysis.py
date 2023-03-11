@@ -11,7 +11,7 @@ def find_indiv_error(data):
     return np.std(data)/np.sqrt(data.size)
 
 
-def find_resampled_variance(data, n=1000, k=1000):
+def find_resampled_variance(data, n=1000, k=10000):
     variance_errors= []
     for i in range(data.shape[0]):
         bootstrapped_var= []
