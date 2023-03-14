@@ -20,7 +20,7 @@ def find_resampled_variance(data, n=1000, k=10000):
         variance_errors.append(find_indiv_error(bootstrapped_var))    
     return variance_errors
 
-data= np.loadtxt('Data/wave_contour_data.txt').T
+data= np.loadtxt('Data/wave_contour_data.txt')[1000:].T
 errors= find_resampled_variance(data)
 print(errors)
 data_reduced= np.var(data, axis= 1)/2500
