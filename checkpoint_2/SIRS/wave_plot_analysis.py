@@ -23,9 +23,9 @@ def find_resampled_variance(data, n=1000, k=10000):
 data= np.loadtxt('Data/wave_contour_data.txt').T
 errors= find_resampled_variance(data)
 print(errors)
-data_reduced= [data[i].var()/2500 for i in range(data.shape[0])] 
+data_reduced= np.var(data, axis= 1)/2500
 plt.errorbar(np.arange(0.2,0.51,0.01), data_reduced, yerr= errors)
 plt.title('Infection fraction varience vs Infection probability')
 plt.xlabel('Infection probabiolity, p$_1$')
-plt.ylabel('Variance of infection fraction')
+plt.ylabel(r'Variance of infection fraction, $\frac{<I^2>-<I>^2}{N}$')
 plt.show()

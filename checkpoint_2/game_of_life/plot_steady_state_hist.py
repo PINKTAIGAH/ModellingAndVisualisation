@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+def function(x, mean):
+    return()*()
+
+
 dataset= np.loadtxt('equilibration_time_dataset.txt').T
 plt.hist(dataset[dataset<4000], bins=50)
 plt.xlabel('Equilibration time, t$_{eq}$ (a.u)')
